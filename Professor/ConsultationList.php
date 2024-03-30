@@ -348,6 +348,7 @@
 
                                     // Perform SQL query
                                     $search = "SELECT
+                                    a.TransactionID,
                                     u.Name,
                                     s.Description as Section,
                                     a.Purpose as Purpose,
@@ -370,7 +371,7 @@
                                         // Output option for each row
                                         $counter++;
 
-                                        echo  '<tr>';
+                                        echo  '<tr onclick="goToCReceipt('.$row['TransactionID'].')">';
                                         echo '<th scope="row">'.$counter.'</th>';
                                         echo '<td>'.$row['Name'].'</td>';
                                         echo '<td>'.$row['Section'].'</td>';
@@ -424,6 +425,10 @@
     <script src="../assets/js/main.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    
+    <script>
+        function goToCReceipt(TransactionID){
+            window.location.href = 'CformReceipt.php?TransactionId=' + TransactionID;
+        }
+    </script>
 </body>
 </html>

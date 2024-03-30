@@ -438,7 +438,7 @@
 
                             <div class="mb-3">
                                 <label for="section" class="form-label">Document Type:</label>
-                                <select class="form-select" aria-label="Default select example" id="documentType" name="documentType">
+                                <select class="form-select" aria-label="Default select example" id="documentType" name="documentType" required>
                                     <option selected="">Select Document Type</option>
                                     <?php
                                         $serverName = "DESKTOP-94I5S6B\\SQLEXPRESS"; // serverName\instanceName
@@ -473,7 +473,10 @@
 
                             <div class="mb-3">
                                 <label for="purpose" class="form-label">Purpose of Submission:</label>
-                                <textarea class="form-control" id="purpose" name="purpose" rows="4"></textarea>
+                                <textarea class="form-control" id="purpose" name="purpose" rows="4" required></textarea>
+                                <div class="invalid-feedback">
+                                            Please fill your purpose.
+                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label for="pro" class="form-label">Professor's Name:</label>
@@ -498,7 +501,7 @@
                                         }
 
                                         // Start select box
-                                        echo '<select class="form-select mb-3" aria-label="Default select example" name="professorId" id="professorId">';
+                                        echo '<select class="form-select mb-3" aria-label="Default select example" name="professorId" id="professorId" required>';
                                         
                                         // Fetch and display results
                                         while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
@@ -519,9 +522,33 @@
 
                                     // Close the PHP tag
                                     ?>
+                                    <div class="invalid-feedback">
+                                            Please select Professor.
+                                    </div>
                             </div>
-                            <button  class="btn btn-primary w-100" id="dFormSubmitBtn">Submit</button><!--type="submit"-->
-
+                            <button  class="btn btn-primary w-100" id="dFormSubmitBtn" data-bs-toggle="modal" data-bs-target="#verticalycentered">
+                                Submit
+                            </button><!--type="submit"-->
+                            <div class="modal fade" id="verticalycentered" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title">Repository is ready</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btnCloseModal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Please put the document inside the repository. Click <b>Submitted</b> when done. 
+                                            Repository will automatically close within 30 seconds.
+                                            <div class="text-center fw-bold fs-2 card-title py-1" id="submissionCountDown">30 s</div>
+                                        </div>
+                                        <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnSubCancel">Cancel</button>
+                                        <button type="button" class="btn btn-primary" id="btnSubmitted">Submitted</button>
+                                        <button type="button" class="btn btn-warning"id="btnSubRetry" hidden>Retry</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- End Vertically centered Modal-->
                         </form>
                     </div>
                 </div>
@@ -557,43 +584,99 @@
         
     </script> -->
     <script>
+    // Set the initial countdown value
+    var countdown = 30;
+    // Call the updateCountdown function every second (1000 milliseconds)
+    var timerInterval;
     $('#dFormSubmitBtn').click(function(e) {
-            e.preventDefault(); // Prevent default form submissio
-        alert('clicked')
-        var sectionSelect = $('#sectionSelect').val()
-        var professorId = $('#professorId').val()
-        var purpose = $('#purpose').val()
-        var documentTypeId = $('#documentType').val()
-        alert(`sectionSelect: ${sectionSelect},
-        professorId: ${professorId},
-        purpose: ${purpose},
-        documentTypeId: ${documentTypeId}`)
-        $.ajax({
-            url: 'DFormButton.php',
-            type: 'POST',
-            data: { 
-                sectionSelect: sectionSelect,
-                professorId: professorId,
-                purpose: purpose,
-                documentType: documentTypeId
-             },
-            dataType: 'json',
-            success: function(response) {
-                    console.log(response.message)
-                    // if (response.exists == 1){
-                    // $('#divIDAlert').text(IdNum + ' is already registered in the system');
-                    // } else if (response.exists ==0) {
-                    // $('#divIDAlert').text('');
-                    // }
-            },
-            error: function(xhr, status, error) {
-                // Error
-                console.error(error.message);
-                console.error(xhr.responseText);
-                console.error('Failed to fetch sections');
-            }
-        });
+        e.preventDefault(); // Prevent default form submission
+        // submitDocument();
+        startCountdown()
+        
     })
+
+    $('#btnSubRetry').click(function(e) {
+        e.preventDefault(); // Prevent default form submission
+        // submitDocument();
+        startCountdown()
+    })
+
+    $('#btnSubmitted').click(function(e) {
+        e.preventDefault(); // Prevent default form submission
+        submitDocument();
+        // startCountdown()
+    })
+
+    $('#btnSubCancel').click(function(e) {
+        e.preventDefault(); // Prevent default form submission
+        // submitDocument();
+        $('#btnSubmitted').show();
+        $('#btnSubRetry').prop('hidden',true);
+    })
+
+    $('#btnCloseModal').click(function(e) {
+        e.preventDefault(); // Prevent default form submission
+        // submitDocument();
+        $('#btnSubmitted').show();
+        $('#btnSubRetry').prop('hidden',true);
+    })
+    function startCountdown(){
+
+        var countdown = 30;
+
+        // Function to update the countdown display
+        function updateCountdown() {
+            $('#submissionCountDown').text(countdown +' s');
+            countdown--; // Decrement the countdown value
+            if (countdown < 0) {
+                clearInterval(timerInterval); // Stop the countdown when it reaches 0
+                $('#btnSubmitted').hide()
+                $('#submissionCountDown').text("Time's up!");
+                $('#btnSubRetry').prop('hidden',false)
+            }
+        }
+
+        // Call the updateCountdown function every second (1000 milliseconds)
+        var timerInterval = setInterval(updateCountdown, 1000);
+
+        // Call updateCountdown once immediately to start the countdown
+        updateCountdown();
+    }
+    function submitDocument(){
+            var sectionSelect = $('#sectionSelect').val()
+            var professorId = $('#professorId').val()
+            var purpose = $('#purpose').val()
+            var documentTypeId = $('#documentType').val()
+            alert(`sectionSelect: ${sectionSelect},
+            professorId: ${professorId},
+            purpose: ${purpose},
+            documentTypeId: ${documentTypeId}`)
+            $.ajax({
+                url: 'DFormButton.php',
+                type: 'POST',
+                data: { 
+                    sectionSelect: sectionSelect,
+                    professorId: professorId,
+                    purpose: purpose,
+                    documentType: documentTypeId
+                },
+                dataType: 'json',
+                success: function(response) {
+                        console.log(response.message)
+                        alert(response.message)
+                        alert(response.TransactionID)
+                        if(response.submitted){
+                            window.location.href = 'DformReceipt.php?TransactionId=' + response.TransactionID;
+                        }
+                },
+                error: function(xhr, status, error) {
+                    // Error
+                    console.error(error.message);
+                    console.error(xhr.responseText);
+                    console.error('Failed to fetch DFormReceipt.php?');
+                }
+            });
+        }
     </script>
 
 </body>

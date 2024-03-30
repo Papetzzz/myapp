@@ -1,4 +1,9 @@
+<?php
+    session_start();
+    $userName = $_SESSION['UserName'];
+?>
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -213,8 +218,8 @@
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li class="dropdown-header">
-                            <h6>Kevin Anderson</h6>
-                            <span>Web Designer</span>
+                            <h6><?php echo $userName?></h6>
+                            <!-- <span>Web Designer</span> -->
                         </li>
                         <li>
                             <hr class="dropdown-divider">
@@ -310,14 +315,122 @@
                 <div class="card">
                     <div class="card-body">
                         <h1 class="card-title text-center">Consultation Form</h1>
-                        <form action="#" method="post">
+                        <!-- action="#" method="post" -->
+                        <form >
                             <div class="mb-3">
                                 <label for="name" class="form-label">Name:</label>
-                                <input type="text" class="form-control" id="name" name="name">
+                                <input type="text" class="form-control" id="name" name="name" value='<?php echo $userName?>' disabled>
                             </div>
-                            <div class="mb-3">
-                                <label for="section" class="form-label">Section:</label>
-                                <input type="text" class="form-control" id="section" name="section">
+                            <div class="row mb-3">
+                                <div class= "col-sm-4">
+                                    <label for="yearSelect" class="form-label">Year Level:</label>
+                                    <select class="form-select" aria-label="Default select example" id="yearSelect"name="yearSelect">
+                                        <option selected="">Select year</option>
+                                        <?php
+                                        $serverName = "DESKTOP-94I5S6B\\SQLEXPRESS"; // serverName\instanceName
+                                        $connectionInfo = array("Database" => "CpE_Transactions");
+                                        $conn = sqlsrv_connect($serverName, $connectionInfo);
+
+                                        if ($conn === false) {
+                                            // Handle connection failure
+                                            die(print_r(sqlsrv_errors(), true));
+                                        }
+
+                                        $search = "SELECT DISTINCT Year FROM Section_table;";
+                                        $result = sqlsrv_query($conn, $search);
+
+                                        if ($result === false) {
+                                            // Handle query execution error
+                                            die(print_r(sqlsrv_errors(), true));
+                                        }
+
+                                        while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                                            echo "<option value='" . $row['Year'] . "'>" . $row['Year'] . "</option>";
+                                        }
+                                        sqlsrv_free_stmt($result);
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="col-sm-8">
+                                    <label for="name" class="form-label">Section:</label>
+                                    <select class="form-select" aria-label="Default select example" id="sectionCSelect" name="sectionCSelect">
+                                        <option selected="">Select section</option>
+                                    </select>
+                                </div>
+                                <script>
+                                    document.getElementById('yearSelect').addEventListener('change', function() {
+                                        var year = this.value;
+                                        fetchSections(year);
+                                    });
+
+                                    function fetchSections(year) {
+                                        // AJAX call to fetch sections based on the selected year
+                                        var xhr = new XMLHttpRequest();
+                                        xhr.onreadystatechange = function() {
+                                            if (xhr.readyState === XMLHttpRequest.DONE) {
+                                                if (xhr.status === 200) {
+                                                    // Success
+                                                    var sections = JSON.parse(xhr.responseText);
+                                                    console.log(sections)
+                                                    populateSections(sections);
+                                                } else {
+                                                    // Error
+                                                    console.error('Failed to fetch sections');
+                                                }
+                                            }
+                                        };
+                                        xhr.open('GET', 'fetch_sections.php?year=' + year, true);
+                                        xhr.send();
+                                    }
+
+                                    function populateSections(sections) {
+                                        var sectionCSelect = document.getElementById('sectionCSelect');
+                                        sectionCSelect.innerHTML = '<option selected="" value=0>Select section</option>';
+                                        sections.forEach(function(section) {
+                                            var option = document.createElement('option');
+                                            option.value = section.sectionID; // Set the value to sectionID
+                                            option.textContent = section.sectionCode; // Display sectionCode and section
+                                            sectionCSelect.appendChild(option);
+                                        });
+                                    }
+                                </script>
+                                <?php
+                                    $serverName = "DESKTOP-94I5S6B\\SQLEXPRESS"; //serverName\instanceName
+                                    $connectionInfo = array("Database" => "CpE_Transactions");
+                                    $conn = sqlsrv_connect($serverName, $connectionInfo);
+
+                                    if ($conn === false) {
+                                        // Handle connection failure
+                                        die(print_r(sqlsrv_errors(), true));
+                                    }
+                                    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["year"])) {
+                                        // Retrieve selected year from the form
+                                        $selectedYear = $_POST["yearSelect"];
+                                        
+                                        // Call your PHP function here with the selected year
+                                        getSection($selectedYear);
+                                    }
+                                    function getSection($year){
+                                        
+                                        // Prepare the SQL statement with parameterized query
+                                        $search = "SELECT SectionID, SectionCode FROM Section_table WHERE Year = ?";
+                                        $params = array($year);
+                                        $result = sqlsrv_query($conn, $search, $params);
+
+                                        if ($result === false) {
+                                            // Handle query execution error
+                                            die(print_r(sqlsrv_errors(), true));
+                                        }
+                                        while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                                            echo "<option value=".$row['SectionID'].">".$row['SectionCode']."</option>";
+                                        }
+                                        sqlsrv_free_stmt($result);
+                                    }
+
+                                    // Close the database connection
+                                    sqlsrv_close($conn);
+                                ?>
+
                             </div>
                             <div class="mb-3">
                                 <label for="purpose" class="form-label">Purpose of Consultation:</label>
@@ -346,7 +459,7 @@
                                         }
 
                                         // Start select box
-                                        echo '<select class="form-select" aria-label="Default select example">';
+                                        echo '<select class="form-select" aria-label="Default select example" id="professorId">';
                                         
                                         // Fetch and display results
                                         while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
@@ -372,17 +485,17 @@
                             </div>
                             <div class="mb-3">
                                 <label for="date" class="form-label">Requested Date:</label>
-                                <input type="date" class="date form-control" id="date" name="date" data-date-format="yyyy-mm-dd">
+                                <input type="date" class="date form-control" id="consultationDate" name="date" data-date-format="yyyy-mm-dd">
                     
                             </div>
                             <div class="mb-3">
                             <label for="inputTime" class="form-label">Requested Time</label>
                             
-                                <input type="time" class="form-control">
+                                <input type="time" class="form-control" id="consultationTime">
                             
                             </div>
-
-                            <button type="submit" class="btn btn-primary w-100">Submit</button>
+                            <!-- type="submit" -->
+                            <butto class="btn btn-primary w-100" id="dCFormSubmitBtn">Submit</button>
                         </form>
                     </div>
                 </div>
@@ -415,8 +528,49 @@
     <!-- My Scripts -->
     <script type="text/javascript">
 
-        document.getElementById('date').valueAsDate = new Date();
+        $('#dCFormSubmitBtn').click(function(){
+            submitCDocument();
+        })
         
+        function submitCDocument(){
+            var sectionCSelect = $('#sectionCSelect').val()
+            var professorId = $('#professorId').val()
+            var purpose = $('#purpose').val()
+            var requestedDate = $('#consultationDate').val()
+            var requestedTime = $('#consultationTime').val()
+            alert(`sectionCSelect: ${sectionCSelect},
+            professorId: ${professorId},
+            purpose: ${purpose},
+            requestedDate: ${requestedDate},
+            requestedTime: ${requestedTime}`)
+            $.ajax({
+                url: 'CFormButton.php',
+                type: 'POST',
+                data: { 
+                    sectionSelect: sectionCSelect,
+                    professorId: professorId,
+                    purpose: purpose,
+                    RequestedDate: requestedDate,
+                    RequestedTime: requestedTime
+                },
+                dataType: 'json',
+                success: function(response) {
+                        console.log(response.message)
+                        alert(response.message)
+                        alert(response.TransactionID)
+                        if(response.submitted){
+                            window.location.href = 'DformReceipt.php?TransactionId=' + response.TransactionID;
+                        }
+                },
+                error: function(xhr, status, error) {
+                    // Error
+                    console.error(error.message);
+                    console.error(xhr.responseText);
+                    console.error('Failed to fetch DFormReceipt.php?');
+                }
+            });
+        }
+
     </script>
 
 </body>

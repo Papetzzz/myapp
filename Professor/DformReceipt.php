@@ -1,5 +1,60 @@
-<?php    
+<?php
+// Ensure TransactionId parameter is provided
+if(isset($_GET['TransactionId'])) {
     session_start();
+    
+    $transactionId = $_GET['TransactionId'];
+
+    // Fetch transaction details from the database based on the provided TransactionId
+    // Replace this code with your actual database query
+    $serverName = "DESKTOP-94I5S6B\SQLEXPRESS";
+    $connectionInfo = array("Database" => "CpE_Transactions");
+    $conn = sqlsrv_connect($serverName, $connectionInfo);
+
+    if ($conn === false) {
+        // Handle connection failure
+        die(print_r(sqlsrv_errors(), true));
+    }
+
+    $query = "  SELECT
+    u_n.Name as Name,
+    s.Year,
+    s.Description as Sect_desc,
+    dt.Type as DocType_desc,
+	t.Purpose,
+	u_p.Name as Prof_Name
+    
+    from Transactions_table t
+    join Users_table u_n on t.UserID = u_n.UserID
+    join Section_table s on s.SectionID = t.SectionID
+    join DocumentType_Table dt on dt.DocumentTypeId = t.DocumentTypeId
+	join Users_table u_p on t.ProfessorID = u_p.UserID
+    where TransactionID = ?";
+    $params = array($transactionId);
+    $result = sqlsrv_query($conn, $query, $params);
+
+    if ($result === false) {
+        // Handle query execution error
+        die(print_r(sqlsrv_errors(), true));
+    }
+
+    // Fetch transaction details
+    $transaction = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
+    $userName = $transaction['Name'];
+    $Year = $transaction["Year"];
+    $Section_Desc = $transaction["Sect_desc"];
+    $DocumentType_Desc = $transaction["DocType_desc"];
+    $Purpose = $transaction["Purpose"];
+    $Prof_Name = $transaction["Prof_Name"];
+
+    // Close the database connection
+    sqlsrv_close($conn);
+}
+else {
+    $response = array("message"=> "TransactionId:".$_GET['TransactionId']."s");
+    echo json_encode($response);
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +86,8 @@
 
     <!-- Template Main CSS File -->
     <link href="../assets/css/style.css" rel="stylesheet">
-
+    <!-- My Scripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <!-- =======================================================
     * Template Name: NiceAdmin
     * Updated: Jan 29 2024 with Bootstrap v5.3.2
@@ -39,21 +95,12 @@
     * Author: BootstrapMade.com
     * License: https://bootstrapmade.com/license/
     ======================================================== -->
-
-    <style>
-        /* Custom CSS */
-        .pointer {
-            cursor: pointer;
-        }
-    </style>
-
 </head>
-
 <body>
     <header id="header" class="header fixed-top d-flex align-items-center">
 
         <div class="d-flex align-items-center justify-content-between">
-            <a href="../Professor/Home_Professor.php" class="logo d-flex align-items-center">
+            <a href="Home.html" class="logo d-flex align-items-center">
                 <img src="../assets/img/logo.png" alt="">
                 <span style="font-size: 20px" class="d-none d-lg-block">CpE Communication</span>
             </a>
@@ -221,13 +268,13 @@
 
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                         <img src="../assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-                        <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+                        <span class="d-none d-md-block dropdown-toggle ps-2"><?php echo $userName?></span>
                     </a><!-- End Profile Iamge Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li class="dropdown-header">
-                            <h6>Kevin Anderson</h6>
-                            <span>Web Designer</span>
+                            <h6><?php echo $userName?></h6>
+                            <!-- <span>Web Designer</span> -->
                         </li>
                         <li>
                             <hr class="dropdown-divider">
@@ -283,7 +330,7 @@
         <ul class="sidebar-nav" id="sidebar-nav">
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="../Professor/Home_Professor.php">
+                <a class="nav-link collapsed" href="Home.html">
                     <i class="bi bi-grid"></i>
                     <span>Dashboard</span>
                 </a>
@@ -291,17 +338,17 @@
 
             <li class="nav-item">
                 <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-                    <i class="bi bi-journal-text"></i><span>Lists</span><i class="bi bi-chevron-down ms-auto"></i>
+                    <i class="bi bi-journal-text"></i><span>Forms</span><i class="bi bi-chevron-down ms-auto"></i>
                 </a>
                 <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                     <li>
-                        <a href="../Professor/DocumentList.php">
-                            <i class="bi bi-circle"></i><span> Document Submission List</span>
+                        <a href="DocumentForm.php">
+                            <i class="bi bi-circle"></i><span>Document Submission Form</span>
                         </a>
                     </li>
                     <li>
-                        <a href="../Professor/ConsultationList.php">
-                            <i class="bi bi-circle"></i><span>Consultation Form List</span>
+                        <a href="ConsultationForm.php">
+                            <i class="bi bi-circle"></i><span>Consultation Form</span>
                         </a>
                     </li>
                     
@@ -314,130 +361,66 @@
 
     </aside><!-- End Sidebar-->
 
-
     
         <main role="main" id="main" class="main pb-3">
             <section class="section dashboard">
-                <div class="row justify-content-center">
-                    <div class=" col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Document List</h5>
-
-                                <div class="overflow-auto">
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <div class="row mb-3">
-                                                <label class="col-sm-3 col-form-label">Order By:</label>
-                                                <div class="col-sm-9">
-                                                    <select class="form-select" aria-label="Default select example" id="orderSelect">
-                                                        <option value="Name">Name</option>
-                                                        <option value="Section">Section</option>
-                                                        <option value="DocumentName">Document Name</option>
-                                                        <option value="Date" selected>Date</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="row mb-3">
-                                                <div class="col-sm-6">
-                                                    <select class="form-select" aria-label="Default select example" id="orderSelect">
-                                                        <option value="ASC" >Ascending</option>
-                                                        <option value="DESC" selected>Descending</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
+                <div class="container mt-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h1 class="card-title text-center">Document Submission Receipt</h1>
+                                    <div id="divDFormReceiptAlerts">
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        <i class="bi bi-check-circle me-1"></i>Succesfully submitted document!
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
+                                    </div><!--action="DFormButton.php" method="post" --> 
+                                
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label"><b>Name:</b><?php echo $userName?></label>
+                                            
+                                        </div>
 
-                                    <table class="table table-bordered border-primary">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">#</th>
-                                                <th scope="col">Name</th>
-                                                <th scope="col">Section</th>
-                                                <th scope="col">Document Name</th>
-                                                <th scope="col">Date</th>
-                                            </tr>
-                                        </thead>
+                                        <div class="row mb-3">
+                                            <div class= "col-sm-6">
+                                                <label for="yearSelect" class="form-label">
+                                                    <b>Year Level: </b>
+                                                    <?php echo $Year ?>
+                                                </label>                                                
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label for="name" class="form-label"><b>Section: </b><?php echo $Section_Desc?></label>                                            
+                                            </div>
+                                        </div>
 
-                                        <tbody>
+                                        <div class="mb-3">
+                                            <label for="section" class="form-label"><b>Document Type: </b> <?php echo $DocumentType_Desc?></label>
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="purpose" class="form-label"><b>Purpose of Submission: </b></label>
+                                            <div class="card-text">
+                                                <?php echo $Purpose?>
+                                                </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="pro" class="form-label"><b>Professor's Name: </b> Ma'am / Sir <?php echo $Prof_Name?></label>
+                                        </div>
+                                        <div class="text-end">
+                                            <button type="button" class="btn btn-primary" onclick="window.location.href='Home_Professor.php'">Go To Dashboard</button>
+                                        </div>
                                         
-                                    <?php
-                                    fillDocList();
-                                    function fillDocList(){
-                                        try {
-                                            $serverName = "DESKTOP-94I5S6B\\SQLEXPRESS"; //serverName\instanceName
-                                            $connectionInfo = array("Database" => "CpE_Transactions");
-                                            $conn = sqlsrv_connect($serverName, $connectionInfo);
-                                            
-                                            if ($conn === false) {
-                                                // Handle connection failure
-                                                die(print_r(sqlsrv_errors(), true));
-                                            }
-                                            // Perform SQL query
-                                            $search = "SELECT *,
-                                            a.TransactionID,
-                                            u.Name,
-                                            s.Description as Section,
-                                            d.Type as DocumentName,
-                                            a.TransactionDate as Date
-                                            FROM Transactions_table a
-                                            join Users_table u on a.UserID = u.UserID
-                                            join Section_table s on a.SectionID = s.SectionID
-                                            join DocumentType_Table d on a.DocumentTypeId = d.DocumentTypeId 
-                                            where TransactionModeID = 2 and a.ProfessorID = ".$_SESSION['UserID']."";
-                                            $result = sqlsrv_query($conn, $search);
-
-                                            if ($result === false) {
-                                                // Handle query execution error
-                                                die(print_r(sqlsrv_errors(), true));
-                                            }
-
-                                            
-                                            // Fetch and display results
-                                            $counter = 0;
-                                            while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-                                                // Output option for each row
-                                                $counter++;
-
-                                                echo  '<tr onclick="goToDReceipt('.$row['TransactionID'].')">';
-                                                echo '<th scope="row">'.$counter.'</th>';
-                                                echo '<td>'.$row['Name'].'</td>';
-                                                echo '<td>'.$row['Section'].'</td>';
-                                                echo '<td>'.$row['DocumentName'].'</td>';
-                                                echo '<td>'.$row['Date']->format('Y-m-d h:i a') .'</td>';
-                                            
-                                                echo '</tr>';
-                                            }
-                                            
-                                            // Close select box
-                                            echo '</select>';
-
-                                        
-                                            sqlsrv_free_stmt($result);
-
-                                        } catch (Exception $e) {
-                                            // Handle other types of exceptions
-                                            die("Some problem getting data from database: " . $e->getMessage());
-                                        }
-                                    }
-                                    // Close the PHP tag
-                                    ?>
-                                        </tbody>
-                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-
                 </div>
             </section>
-        </main>
 
+        </main>
+    
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
@@ -453,12 +436,10 @@
 
     <!-- Template Main JS File -->
     <script src="../assets/js/main.js"></script>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script>
-        function goToDReceipt(TransactionID){
-            window.location.href = 'DformReceipt.php?TransactionId=' + TransactionID;
-        }
+    <!-- <script>
+        setTimeout(function(){
+            $('#divDFormReceiptAlerts').hide('slow')
+        },10000); -->
     </script>
-</body>
+    </body>
 </html>

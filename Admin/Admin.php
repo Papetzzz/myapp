@@ -29,6 +29,8 @@
   <!-- Template Main CSS File -->
   <link href="../assets/css/style.css" rel="stylesheet">
 
+  <!-- My Scripts -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <!-- =======================================================
   * Template Name: NiceAdmin
   * Updated: Jan 29 2024 with Bootstrap v5.3.2
@@ -68,22 +70,52 @@
 
                   <form class="row g-3 needs-validation" action="Connection.php"method="post" novalidate>
                     <div class="col-12">
-                      <label for="yourName" class="form-label">Name</label>
-                      <input type="text" name="name" class="form-control" id="yourName" required>
-                      <div class="invalid-feedback">Please, enter your name!</div>
+                      <label for="yourName" class="form-label">Full Name</label>
+                      <input type="text" name="name" class="form-control" id="yourName" placeholder="Juan A. Dela Cruz" required >
+                      <div class="invalid-feedback">Please, enter your full name!</div>
                     </div>
 
                     <div class="col-12">
                       <label for="yourEmail" class="form-label">ID Number</label>
-                      <input type="text" name="id_number" class="form-control" id="yourEmail" required>
-                      <div class="invalid-feedback">Please enter a valid Email adddress!</div>
+                      <div class="input-group has-validation">
+                        <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                        <input type="text" name="id_number" class="form-control" id="yourEmail" placeholder="24-00000" required>
+                        <div class="invalid-feedback">Please enter a valid ID Number!</div>
+                        <script>
+                          $('#yourEmail').focusout(function(){
+                            checkIdNumber($(this).val());
+                          })
+                          function checkIdNumber(IdNum){
+                            $.ajax({
+                                url: '../fetch_Id.php',
+                                type: 'GET',
+                                data: { IdNum: IdNum },
+                                dataType: 'json',
+                                success: function(response) {
+                                      if (response.exists == 1){
+                                        $('#divIDAlert').text(IdNum + ' is already registered in the system');
+                                      } else if (response.exists ==0) {
+                                        $('#divIDAlert').text('');
+                                      }
+                                },
+                                error: function(xhr, status, error) {
+                                    // Error
+                                    console.error(error.message);
+                                    console.error(xhr.responseText);
+                                    console.error('Failed to fetch sections');
+                                }
+                            });
+
+                          }
+                        </script>
+                      </div>
+                      <div class="small text-primary" id="divIDAlert"></div>            
                     </div>
 
                     <div class="col-12">
                       <label for="yourUsername" class="form-label">Password</label>
-                      <div class="input-group has-validation">
-                        <span class="input-group-text" id="inputGroupPrepend">@</span>
-                        <input type="password" name="Password" class="form-control" id="yourUsername" required>
+                      <div class="has-validation">
+                        <input type="password" name="Password" class="form-control" id="yourUsername" placeholder="Password" required>
                         <div class="invalid-feedback">Please choose a username.</div>
                       </div>
                     </div>
@@ -132,6 +164,7 @@
 
   <!-- Template Main JS File -->
   <script src="../assets/js/main.js"></script>
+
 
 </body>
 
