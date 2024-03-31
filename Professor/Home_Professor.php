@@ -415,41 +415,42 @@
 
                 </div>
                 <div class="row" id="divConsultationCards">
-                    <div class="col-md-6">
+                </div>
+                
+            </section>
+            <div id="divConsultCardsTemplate">
+                <div class="col-md-6" id="consultCardTransactNum">
                         <div class="card">
                             <div class="card-body text-center">
-                                <h5 class="card-title"><?php echo $Section_Desc." - ".$userName ?></h5>
-                                <h6 class="card-subtitle mb-2 text-muted"><b>Purpose: </b><?php echo $Purpose?></h6>
-                                <h6 class="card-subtitle mb-2 text-muted"><b>Date Requested: </b><?php echo $requestedDate."    ".$requestedTime?></h6>
+                                <h5 class="card-title">Section_Desc - userName</h5>
+                                <h6 class="card-subtitle mb-2 text-muted"><b>Purpose: </b>$Purpose</h6>
+                                <h6 class="card-subtitle mb-2 text-muted"><b>Date Requested: </b>requestedDate</h6>
                                 
-                                <div class="col-12 text-start mb-3" id="divReason" style="display: none;">
+                                <div class="col-12 text-start mb-3" id="divReasonTransactNum" style="display: none;">
                                     <label for="inputReason" class="form-label">Reason:</label>
                                     <textarea type="text" class="form-control" id="inputReason" placeholder="Please provide reason for declining"></textarea>
                                 </div>
                                 <hr>
-                                <div class="row">
-                                    <p class="card-text col-sm-6 mb-1">Do you want to accept this consultation?</p>
-                                    <div class="card-text col row me-2">
-                                        <a class="btn btn-primary col-sm-5 me-1" onclick="acceptRequest()">
+                                <div class="row" id="rowAcceptDeclineTransactNum">
+                                    <p class="card-text col-md-6 mb-1">Do you want to accept this consultation?</p>
+                                    <div class="card-text col me-2">
+                                        <button class="btn btn-primary col-sm-5 me-1" onclick="acceptRequest(TransactNum)">
                                             <i class="bi bi-check-circle me-1"></i>Accept
-                                        </a>
-                                        <a class="btn btn-danger  col-sm-5" onclick="declineRequest()">
+                                        </button>
+                                        <button class="btn btn-danger  col-sm-5" onclick="declineRequest(TransactNum)">
                                             <i class="bi bi-x-circle me-1"></i>Decline
-                                        </a>
-                                    </p>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="submitButtonTransactNum" style="display: none;">
+                                    <button class="btn btn-primary col-sm-5 me-1" >
+                                        <i class="bi bi-check-circle me-1"></i>Submit Response
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <script>
-                        function declineRequest() {
-                            $('#divReason').show('slow')
-                        }
-                    </script>
-                </div>
-                
-            </section>
+            </div>
         </main>
 
 
@@ -469,6 +470,19 @@
     <script src="../assets/js/main.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    
+                    
+
+    <script>
+        function declineRequest(TransactionID) {
+            $('#divReason'+TransactionID).show('slow')
+            $('#submitButton'+TransactionID).show('slow')
+            $('#rowAcceptDecline'+TransactionID).hide('slow')
+            $('#submitButton'+TransactionID).click(function(){
+                
+            })
+        }
+    </script>
     <script>
         // Function to update the table based on the selected ordering and direction
         function updateTable(e,dateRange) {
@@ -489,11 +503,29 @@
                 dataType: 'json',
                 success: function(response) {
                     console.log(response)
+                    if (response.length > 0){
+                        $.each(response, function(i, field){
+
+                            var card = $('#divConsultCardsTemplate').html();
+                            card = card.replace('Section_Desc',field.Section)
+                            card = card.replace('userName',field.Name)
+                            card = card.replace('$Purpose',field.Purpose)
+                            var sqlDateTimeString = field.Date.date
+                            var formattedDateTime = new Date(sqlDateTimeString.replace(/-/g, '/')).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true});
+                            card = card.replace('requestedDate',formattedDateTime)
+                            card = card.replace(/TransactNum/g,field.TransactionID)
+                            $('#divConsultationCards').append(card)
+
+                        })
+                    }
 
                     // Replace the existing table with the updated table
                     // $('#tbodyCTable').html(response);
                 },
                 error: function(xhr, status, error) {
+                    console.error(xhr.responseText)
+                    console.error(status)
+                    console.error(error)
                     console.error('Failed to load consult cards');
                 }
             });
