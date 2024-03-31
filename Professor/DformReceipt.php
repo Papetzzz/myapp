@@ -330,7 +330,7 @@ else {
         <ul class="sidebar-nav" id="sidebar-nav">
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="Home.html">
+                <a class="nav-link collapsed" href="Home_Professor.php">
                     <i class="bi bi-grid"></i>
                     <span>Dashboard</span>
                 </a>
@@ -342,13 +342,13 @@ else {
                 </a>
                 <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                     <li>
-                        <a href="DocumentForm.php">
-                            <i class="bi bi-circle"></i><span>Document Submission Form</span>
+                        <a href="DocumentList.php">
+                            <i class="bi bi-circle"></i><span>Document Submission List</span>
                         </a>
                     </li>
                     <li>
-                        <a href="ConsultationForm.php">
-                            <i class="bi bi-circle"></i><span>Consultation Form</span>
+                        <a href="ConsultationList.php">
+                            <i class="bi bi-circle"></i><span>Consultation List</span>
                         </a>
                     </li>
                     
@@ -368,14 +368,11 @@ else {
                     <div class="row justify-content-center">
                         <div class="col-md-6">
                             <div class="card">
+                                
                                 <div class="card-body">
                                     <h1 class="card-title text-center">Document Submission Receipt</h1>
-                                    <div id="divDFormReceiptAlerts">
-                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        <i class="bi bi-check-circle me-1"></i>Succesfully submitted document!
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </div>
-                                    </div><!--action="DFormButton.php" method="post" --> 
+                                    
+                                    <div><!--action="DFormButton.php" method="post" --> 
                                 
                                         <div class="mb-3">
                                             <label for="name" class="form-label"><b>Name:</b><?php echo $userName?></label>
@@ -436,10 +433,10 @@ else {
 
     <!-- Template Main JS File -->
     <script src="../assets/js/main.js"></script>
-    <!-- <script>
-        setTimeout(function(){
-            $('#divDFormReceiptAlerts').hide('slow')
-        },10000); -->
+    <script>
+        // setTimeout(function(){
+        //     $('#divDFormReceiptAlerts').hide('slow')
+        // },10000);
     </script>
     </body>
 </html>

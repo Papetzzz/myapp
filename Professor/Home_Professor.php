@@ -310,11 +310,11 @@
 
     </aside><!-- End Sidebar-->
 
-    <div class="container">
+
         <main role="main" id="main" class="main pb-3">
             <section class="section dashboard">
 
-            <div class="card">
+            <!-- <div class="card">
                 <div class="card-body text-center">
                     <h5 class="card-title">$row['Section']-$row['Name']</h5>
                     <h6 class="card-subtitle mb-2 text-muted">$row['Purpose']</h6>
@@ -334,13 +334,13 @@
                         </p>
                     </div>
                 </div>
-</div>
+            </div>
 
 <script>
     function declineRequest() {
         $('#divReason').show('slow')
     }
-</script>
+</script> -->
 
                 <div class="row justify-content-center">
                     <div class="col-xxl-4 col-md-6">
@@ -414,9 +414,43 @@
                     
 
                 </div>
+                <div class="row" id="divConsultationCards">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h5 class="card-title"><?php echo $Section_Desc." - ".$userName ?></h5>
+                                <h6 class="card-subtitle mb-2 text-muted"><b>Purpose: </b><?php echo $Purpose?></h6>
+                                <h6 class="card-subtitle mb-2 text-muted"><b>Date Requested: </b><?php echo $requestedDate."    ".$requestedTime?></h6>
+                                
+                                <div class="col-12 text-start mb-3" id="divReason" style="display: none;">
+                                    <label for="inputReason" class="form-label">Reason:</label>
+                                    <textarea type="text" class="form-control" id="inputReason" placeholder="Please provide reason for declining"></textarea>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <p class="card-text col-sm-6 mb-1">Do you want to accept this consultation?</p>
+                                    <div class="card-text col row me-2">
+                                        <a class="btn btn-primary col-sm-5 me-1" onclick="acceptRequest()">
+                                            <i class="bi bi-check-circle me-1"></i>Accept
+                                        </a>
+                                        <a class="btn btn-danger  col-sm-5" onclick="declineRequest()">
+                                            <i class="bi bi-x-circle me-1"></i>Decline
+                                        </a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        function declineRequest() {
+                            $('#divReason').show('slow')
+                        }
+                    </script>
+                </div>
+                
             </section>
         </main>
-    </div>
 
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
@@ -435,6 +469,38 @@
     <script src="../assets/js/main.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    
+    <script>
+        // Function to update the table based on the selected ordering and direction
+        function updateTable(e,dateRange) {
+            // Get the selected ordering and direction
+            var orderBy = $('#orderByCSelect').val();
+            var direction = $('#orderCSelect').val();
+            dateRange = dateRange ?? null;
+            console.log(dateRange)
+            // Perform an AJAX request to fetch the updated data from the server
+            // Send the selected ordering and direction to the server
+            $.ajax({
+                url: 'load_consult_cards.php',
+                type: 'GET',
+                data: { orderBy: orderBy, 
+                    direction: direction,
+                    dateFilter: dateRange
+                 },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response)
+
+                    // Replace the existing table with the updated table
+                    // $('#tbodyCTable').html(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Failed to load consult cards');
+                }
+            });
+        }
+
+        // Call the updateTable function once initially to populate the table
+        updateTable();
+    </script>
 </body>
 </html>

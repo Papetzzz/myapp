@@ -304,23 +304,63 @@
                 </ul>
             </li><!-- End Forms Nav -->
 
-         
+        
 
         </ul>
 
     </aside><!-- End Sidebar-->
 
 
-    <div class="container">
+
         <main role="main" id="main" class="main pb-3">
             <section class="section dashboard">
                 <div class="row justify-content-center">
                     <div class=" col-12">
                         <div class="card">
-                            <div class="card-body">
+                            <div class="card-body position-relative">
+                                <div class="position-absolute top-0 end-0">
+                                    <!-- <i class="bi bi-three-dots p-2 text-secondary"></i> -->
+                                    
+                                        <a class="icon" href="#" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots p-2 pe-3 text-secondary"></i></a>
+                                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" data-popper-placement="bottom-end" style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0px, 29.6px, 0px);">
+                                            <li class="dropdown-header text-start">
+                                            <h6>Filter</h6>
+                                            </li>
+
+                                            <li><a class="dropdown-item" onclick="updateTable(event,'a')">Today</a></li>
+                                            <li><a class="dropdown-item" onclick="updateTable(event,'b')">This Week</a></li>
+                                            <li><a class="dropdown-item" onclick="updateTable(event,'c')">This Month</a></li>
+                                        </ul>
+                                </div>  
                                 <h5 class="card-title">Consultation List</h5>
                                 <div class="overflow-auto">
-
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="row mb-3">
+                                                <label class="col-sm-3 col-form-label">Order By:</label>
+                                                <div class="col-sm-9">
+                                                    <select class="form-select" aria-label="Default select example" id="orderByCSelect">
+                                                        <option value="Name">Name</option>
+                                                        <option value="Section">Section</option>
+                                                        <option value="Purpose">Purpose</option>
+                                                        <option value="Date">Requested Date</option>
+                                                        <option value="DateSubmitted" selected>Date Submitted</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="row mb-3">
+                                                <div class="col-sm-6">
+                                                    <select class="form-select" aria-label="Default select example" id="orderCSelect">
+                                                        <option value="ASC" >Ascending</option>
+                                                        <option value="DESC" selected>Descending</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
                                 <table class="table table-bordered border-primary">
                                     <thead>
                                         <tr>
@@ -330,71 +370,13 @@
                                             <th scope="col">Purpose</th>
                                             <th scope="col">Requested Date</th>
                                             <th scope="col">Requested Time</th>
+                                            <th scope="col">Date Submitted</th>
                                         </tr>
                                     </thead>
 
-                                    <tbody>
+                                    <tbody id="tbodyCTable">
                                     
-                                <?php
-                                try {
-                                    $serverName = "DESKTOP-94I5S6B\\SQLEXPRESS"; //serverName\instanceName
-                                    $connectionInfo = array("Database" => "CpE_Transactions");
-                                    $conn = sqlsrv_connect($serverName, $connectionInfo);
-                                    
-                                    if ($conn === false) {
-                                        // Handle connection failure
-                                        die(print_r(sqlsrv_errors(), true));
-                                    }
-
-                                    // Perform SQL query
-                                    $search = "SELECT
-                                    a.TransactionID,
-                                    u.Name,
-                                    s.Description as Section,
-                                    a.Purpose as Purpose,
-                                    a.RequestedDate as Date
-                                    FROM Transactions_table a
-                                    join Users_table u on a.UserID = u.UserID
-                                    join Section_table s on a.SectionID = s.SectionID
-                                    where TransactionModeID = 1;";
-                                    $result = sqlsrv_query($conn, $search);
-
-                                    if ($result === false) {
-                                        // Handle query execution error
-                                        die(print_r(sqlsrv_errors(), true));
-                                    }
-
-                                    
-                                    // Fetch and display results
-                                    $counter = 0;
-                                    while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
-                                        // Output option for each row
-                                        $counter++;
-
-                                        echo  '<tr onclick="goToCReceipt('.$row['TransactionID'].')">';
-                                        echo '<th scope="row">'.$counter.'</th>';
-                                        echo '<td>'.$row['Name'].'</td>';
-                                        echo '<td>'.$row['Section'].'</td>';
-                                        echo '<td>'.$row['Purpose'].'</td>';
-                                        echo '<td>'.$row['Date']->format('Y-M-d') .'</td>';
-                                        echo '<td>'.$row['Date']->format('H:i:s') .'</td>';
-                                    
-                                        echo '</tr>';
-                                    }
-                                    
-                                    // Close select box
-                                    echo '</select>';
-
-                                   
-                                    sqlsrv_free_stmt($result);
-
-                                } catch (Exception $e) {
-                                    // Handle other types of exceptions
-                                    die("Some problem getting data from database: " . $e->getMessage());
-                                }
-
-                                // Close the PHP tag
-                                ?>
+                               
                                     </tbody>
                                 </div>
 
@@ -406,7 +388,6 @@
                 </div>
             </section>
         </main>
-    </div>
 
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
@@ -429,6 +410,40 @@
         function goToCReceipt(TransactionID){
             window.location.href = 'CformReceipt.php?TransactionId=' + TransactionID;
         }
+        // Add an event listener to detect changes in the select elements
+        $('#orderByCSelect, #orderCSelect').change(updateTable);
+
+        // Function to update the table based on the selected ordering and direction
+        function updateTable(e,dateRange) {
+            // Get the selected ordering and direction
+            var orderBy = $('#orderByCSelect').val();
+            var direction = $('#orderCSelect').val();
+            dateRange = dateRange ?? null;
+            console.log(dateRange)
+            // Perform an AJAX request to fetch the updated data from the server
+            // Send the selected ordering and direction to the server
+            $.ajax({
+                url: 'update_ctable.php',
+                type: 'GET',
+                data: { orderBy: orderBy, 
+                    direction: direction,
+                    dateFilter: dateRange
+                 },
+                dataType: 'html',
+                success: function(response) {
+                    console.log(response)
+
+                    // Replace the existing table with the updated table
+                    $('#tbodyCTable').html(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Failed to update table');
+                }
+            });
+        }
+
+        // Call the updateTable function once initially to populate the table
+        updateTable();
     </script>
 </body>
 </html>

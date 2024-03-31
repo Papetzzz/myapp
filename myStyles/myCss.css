@@ -1,0 +1,25 @@
+@media (max-width: 768px) {
+    /* Hide the table headers */
+    table thead {
+        display: none;
+    }
+
+    /* Set the table row to display flex */
+    table tbody tr {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Set the table data cells */
+    table tbody tr th,
+    table tbody tr td {
+        width: 100%;
+        text-align: left;
+    }
+
+    /* Adjust the appearance of the first cell */
+    table tbody tr th:first-child {
+        display: block;
+        width: auto;
+    }
+}
