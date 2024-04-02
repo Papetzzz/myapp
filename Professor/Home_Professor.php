@@ -414,7 +414,20 @@
                     
 
                 </div>
-                <div class="row" id="divConsultationCards">
+                <div id="divConsultationCards">
+                    <div class="row consultCardToday">
+                        <h5 class="card-title mx-3">Requested Today</h5>
+                    </div>
+                    <hr>
+                    <div class="row consultCardThisWeek">
+                        <h5 class="card-title mx-3">Requested This Week</h5>
+
+                    </div>
+                    <hr>
+                    <div class="row consultCardOthers">
+                        <h5 class="card-title mx-3">Requested Others</h5>
+
+                    </div>
                 </div>
                 
             </section>
@@ -422,13 +435,15 @@
                 <div class="col-md-6" id="consultCardTransactNum">
                         <div class="card">
                             <div class="card-body text-center">
-                                <h5 class="card-title">Section_Desc - userName</h5>
+                                <div class="text-start"><span class="badge border-light border-1 text-black-50 mt-3">submittedDate</span></div>
+                                <h5 class="card-title pt-0">Section_Desc - userName</h5>
                                 <h6 class="card-subtitle mb-2 text-muted"><b>Purpose: </b>$Purpose</h6>
-                                <h6 class="card-subtitle mb-2 text-muted"><b>Date Requested: </b>requestedDate</h6>
+                                <h6 class="card-subtitle mb-2 text-muted"><b>Date Suggested: </b>requestedDate</h6>
+                                <!-- <h6 class="card-subtitle mb-2 text-muted"><b>Date Submitted: </b>submittedDate</h6> -->
                                 
                                 <div class="col-12 text-start mb-3" id="divReasonTransactNum" style="display: none;">
-                                    <label for="inputReason" class="form-label">Reason:</label>
-                                    <textarea type="text" class="form-control" id="inputReason" placeholder="Please provide reason for declining"></textarea>
+                                    <label for="inputReasonTransactNum" class="form-label">Remarks:</label>
+                                    <textarea type="text" class="form-control" id="inputReasonTransactNum" placeholder="Please provide reason for declining"></textarea>
                                 </div>
                                 <hr>
                                 <div class="row" id="rowAcceptDeclineTransactNum">
@@ -475,15 +490,16 @@
 
     <script>
         function declineRequest(TransactionID) {
+            isAccepted = 0;
+            isDenied = 1;
             $('#divReason'+TransactionID).show('slow')
             $('#submitButton'+TransactionID).show('slow')
             $('#rowAcceptDecline'+TransactionID).hide('slow')
+            remarksText(TransactionID)
             $('#submitButton'+TransactionID).click(function(){
                 
             })
         }
-    </script>
-    <script>
         // Function to update the table based on the selected ordering and direction
         function updateTable(e,dateRange) {
             // Get the selected ordering and direction
@@ -512,10 +528,36 @@
                             card = card.replace('$Purpose',field.Purpose)
                             var sqlDateTimeString = field.Date.date
                             var formattedDateTime = new Date(sqlDateTimeString.replace(/-/g, '/')).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true});
+                            
                             card = card.replace('requestedDate',formattedDateTime)
                             card = card.replace(/TransactNum/g,field.TransactionID)
-                            $('#divConsultationCards').append(card)
+                            var submittedDateTime = field.DateSubmitted.date
+                            var formattedSubmittedDate = new Date(submittedDateTime.replace(/-/g, '/')).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false});
 
+                            card = card.replace(/submittedDate/g,formattedSubmittedDate)
+                            // Get today's date
+                            let today = new Date();
+
+                            // Assuming field.DateSubmitted is in the format "YYYY-MM-DD", you can parse it into a Date object
+                            let submittedDate = new Date(field.DateSubmitted.date);
+                            let sevenDaysAgo = new Date(today);
+                            sevenDaysAgo.setDate(today.getDate() - 7); 
+                            let yearAgo = new Date(today);
+                            yearAgo.setDate(today.getDate() - 365);
+
+                            console.log(`field.DateSubmitted: ${field.DateSubmitted}
+                            submittedDate: ${submittedDate}
+                            ${submittedDate.toDateString()} === ${today.toDateString()}
+                            sevenDaysAgo: ${sevenDaysAgo}
+                            ${submittedDate.toDateString() === today.toDateString()}`)
+                            if (submittedDate.toDateString() === today.toDateString()){
+                                $('#divConsultationCards .consultCardToday').append(card)
+                            } else if (submittedDate >= sevenDaysAgo && submittedDate <= today) {
+                                // Append the card to the specified div
+                                $('#divConsultationCards .consultCardThisWeek').append(card);
+                            } else {
+                                $('#divConsultationCards .consultCardOthers').append(card);
+                            }
                         })
                     }
 
@@ -533,6 +575,35 @@
 
         // Call the updateTable function once initially to populate the table
         updateTable();
+        var isAccepted = 0;
+        var isDenied = 0;
+        function acceptRequest(TransactionID){
+            isAccepted = 1;
+            isDenied = 0;
+            $('#divReason'+TransactionID).show('slow')
+            $('#submitButton'+TransactionID).show('slow')
+            $('#rowAcceptDecline'+TransactionID).hide('slow')
+            remarksText(TransactionID)
+        }
+        var TransactNum = ''
+        $(document).on('click', '[id^="submitButton"]', function() {
+            // Extract the number from the submit button's ID
+            var buttonId = $(this).attr('id');
+            TransactNum = buttonId.replace('submitButton', '');
+
+        });
+        function remarksText(TransactNum){
+            // alert(`isAccepted: ${isAccepted}; isDenied: ${isDenied}`)
+            // Check if isAccepted is 0 and isDenied is 1
+            if (isAccepted == 0 && isDenied == 1) {
+                // Set placeholder text for providing reason for declining
+                $('#inputReason' + TransactNum).attr('placeholder', 'Please provide reason for declining');
+            } else if (isDenied == 0 && isAccepted == 1) {
+                // Set placeholder text for providing remarks
+                $('#inputReason' + TransactNum).attr('placeholder', 'Please provide remarks');
+            }
+        }
+
     </script>
 </body>
 </html>

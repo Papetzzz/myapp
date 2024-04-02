@@ -361,23 +361,100 @@
                                         </div>
                                         
                                     </div>
-                                <table class="table table-bordered border-primary">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Section</th>
-                                            <th scope="col">Purpose</th>
-                                            <th scope="col">Requested Date</th>
-                                            <th scope="col">Requested Time</th>
-                                            <th scope="col">Date Submitted</th>
-                                        </tr>
-                                    </thead>
+                                    <table class="table table-bordered border-primary">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Section</th>
+                                                <th scope="col">Purpose</th>
+                                                <th scope="col">Requested Date</th>
+                                                <th scope="col">Requested Time</th>
+                                                <th scope="col">Date Submitted</th>
+                                            </tr>
+                                        </thead>
 
-                                    <tbody id="tbodyCTable">
+                                        <tbody id="tbodyCTable">
+                                        
+                                
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                </div>
+            </section>
+            <hr>
+            <section class="section dashboard">
+                <div class="row justify-content-center">
+                    <div class=" col-12">
+                        <div class="card">
+                            <div class="card-body position-relative">
+                                <div class="position-absolute top-0 end-0">
+                                    <!-- <i class="bi bi-three-dots p-2 text-secondary"></i> -->
                                     
-                               
-                                    </tbody>
+                                        <a class="icon" href="#" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots p-2 pe-3 text-secondary"></i></a>
+                                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" data-popper-placement="bottom-end" style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0px, 29.6px, 0px);">
+                                            <li class="dropdown-header text-start">
+                                            <h6>Filter</h6>
+                                            </li>
+
+                                            <li><a class="dropdown-item" onclick="updateApprovedTable(event,'a')">Today</a></li>
+                                            <li><a class="dropdown-item" onclick="updateApprovedTable(event,'b')">This Week</a></li>
+                                            <li><a class="dropdown-item" onclick="updateApprovedTable(event,'c')">This Month</a></li>
+                                        </ul>
+                                </div>  
+                                <h5 class="card-title">Consultation List</h5>
+                                <div class="overflow-auto">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="row mb-3">
+                                                <label class="col-sm-3 col-form-label">Order By:</label>
+                                                <div class="col-sm-9">
+                                                    <select class="form-select" aria-label="Default select example" id="orderByApprovedSelect">
+                                                        <option value="Name">Name</option>
+                                                        <option value="Section">Section</option>
+                                                        <option value="Purpose">Purpose</option>
+                                                        <option value="Date">Requested Date</option>
+                                                        <option value="DateSubmitted" selected>Date Submitted</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="row mb-3">
+                                                <div class="col-sm-6">
+                                                    <select class="form-select" aria-label="Default select example" id="orderApprovedSelect">
+                                                        <option value="ASC" >Ascending</option>
+                                                        <option value="DESC" selected>Descending</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                    <table class="table table-bordered border-primary">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Section</th>
+                                                <th scope="col">Purpose</th>
+                                                <th scope="col">Requested Date</th>
+                                                <th scope="col">Requested Time</th>
+                                                <th scope="col">Date Submitted</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody id="tbodyApprovedTable">
+                                        
+                                
+                                        </tbody>
+                                    </table>
                                 </div>
 
                             </div>
@@ -411,9 +488,42 @@
             window.location.href = 'CformReceipt.php?TransactionId=' + TransactionID;
         }
         // Add an event listener to detect changes in the select elements
-        $('#orderByCSelect, #orderCSelect').change(updateTable);
+        $('#orderByCSelect, #orderCSelect').change(function(){
+            updateTable(event,null,'N')
+        });
+        $('#orderByApprovedSelect, #orderApprovedSelect').change(function(){
+            updateTable(event,null,'A')
+        });
 
         // Function to update the table based on the selected ordering and direction
+        function updateApprovedTable(e,dateRange) {
+            // Get the selected ordering and direction
+            var orderBy = $('#orderByApprovedSelect').val();
+            var direction = $('#orderApprovedSelect').val();
+            dateRange = dateRange ?? null;
+            console.log(dateRange)
+            // Perform an AJAX request to fetch the updated data from the server
+            // Send the selected ordering and direction to the server
+            $.ajax({
+                url: 'update_ctable.php',
+                type: 'GET',
+                data: { orderBy: orderBy, 
+                    direction: direction,
+                    dateFilter: dateRange,
+                    statusCode: 'A'
+                 },
+                dataType: 'html',
+                success: function(response) {
+                    console.log(response)
+
+                    // Replace the existing table with the updated table
+                    $('#tbodyApprovedTable').html(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Failed to update table');
+                }
+            });
+        }
         function updateTable(e,dateRange) {
             // Get the selected ordering and direction
             var orderBy = $('#orderByCSelect').val();
@@ -427,7 +537,8 @@
                 type: 'GET',
                 data: { orderBy: orderBy, 
                     direction: direction,
-                    dateFilter: dateRange
+                    dateFilter: dateRange,
+                    statusCode: 'N'
                  },
                 dataType: 'html',
                 success: function(response) {

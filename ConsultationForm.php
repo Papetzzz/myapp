@@ -559,7 +559,7 @@
                         alert(response.message)
                         alert(response.TransactionID)
                         if(response.submitted){
-                            window.location.href = 'DformReceipt.php?TransactionId=' + response.TransactionID;
+                            window.location.href = 'CformReceipt.php?TransactionId=' + response.TransactionID;
                         }
                 },
                 error: function(xhr, status, error) {

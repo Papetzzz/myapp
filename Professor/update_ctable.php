@@ -4,7 +4,7 @@
     $orderBy = isset($_GET['orderBy']) ? $_GET['orderBy'] : 'Date';
     $direction = isset($_GET['direction']) ? $_GET['direction'] : 'DESC';
     $dateFilter = isset($_GET['dateFilter']) ? $_GET['dateFilter'] : null;
-
+    $statusCode = isset($_GET['statusCode']) ? $_GET['statusCode'] : 'N';
     // Define the date ranges based on the selected filter
     switch ($dateFilter) {
         case 'a': // Today
