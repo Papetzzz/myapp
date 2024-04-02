@@ -300,11 +300,11 @@
                             <i class="bi bi-circle"></i><span>Consultation Form List</span>
                         </a>
                     </li>
-                    
+
                 </ul>
             </li><!-- End Forms Nav -->
 
-         
+
 
         </ul>
 
@@ -375,11 +375,11 @@
                             </div>
 
                         </div>
-                    
+
                     </div>
                     <div class="col-xxl-4 col-md-6">
                         <div class="card pointer info-card sales-card" onclick="window.location.href='ConsultationList.php'">
-                        
+
 
                             <div class="filter">
                                 <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
@@ -411,7 +411,7 @@
 
                         </div>
                     </div>
-                    
+
 
                 </div>
                 <div id="divConsultationCards">
@@ -429,7 +429,7 @@
 
                     </div>
                 </div>
-                
+
             </section>
             <div id="divConsultCardsTemplate">
                 <div class="col-md-6" id="consultCardTransactNum">
@@ -440,7 +440,7 @@
                                 <h6 class="card-subtitle mb-2 text-muted"><b>Purpose: </b>$Purpose</h6>
                                 <h6 class="card-subtitle mb-2 text-muted"><b>Date Suggested: </b>requestedDate</h6>
                                 <!-- <h6 class="card-subtitle mb-2 text-muted"><b>Date Submitted: </b>submittedDate</h6> -->
-                                
+
                                 <div class="col-12 text-start mb-3" id="divReasonTransactNum" style="display: none;">
                                     <label for="inputReasonTransactNum" class="form-label">Remarks:</label>
                                     <textarea type="text" class="form-control" id="inputReasonTransactNum" placeholder="Please provide reason for declining"></textarea>
@@ -485,8 +485,8 @@
     <script src="../assets/js/main.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    
-                    
+
+
 
     <script>
         function declineRequest(TransactionID) {
@@ -497,7 +497,7 @@
             $('#rowAcceptDecline'+TransactionID).hide('slow')
             remarksText(TransactionID)
             $('#submitButton'+TransactionID).click(function(){
-                
+
             })
         }
         // Function to update the table based on the selected ordering and direction
@@ -512,7 +512,7 @@
             $.ajax({
                 url: 'load_consult_cards.php',
                 type: 'GET',
-                data: { orderBy: orderBy, 
+                data: { orderBy: orderBy,
                     direction: direction,
                     dateFilter: dateRange
                  },
@@ -528,7 +528,7 @@
                             card = card.replace('$Purpose',field.Purpose)
                             var sqlDateTimeString = field.Date.date
                             var formattedDateTime = new Date(sqlDateTimeString.replace(/-/g, '/')).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true});
-                            
+
                             card = card.replace('requestedDate',formattedDateTime)
                             card = card.replace(/TransactNum/g,field.TransactionID)
                             var submittedDateTime = field.DateSubmitted.date
@@ -541,7 +541,7 @@
                             // Assuming field.DateSubmitted is in the format "YYYY-MM-DD", you can parse it into a Date object
                             let submittedDate = new Date(field.DateSubmitted.date);
                             let sevenDaysAgo = new Date(today);
-                            sevenDaysAgo.setDate(today.getDate() - 7); 
+                            sevenDaysAgo.setDate(today.getDate() - 7);
                             let yearAgo = new Date(today);
                             yearAgo.setDate(today.getDate() - 365);
 
@@ -590,8 +590,13 @@
             // Extract the number from the submit button's ID
             var buttonId = $(this).attr('id');
             TransactNum = buttonId.replace('submitButton', '');
+            updateStatus(TransactNum,isAccepted)
+
 
         });
+
+
+
         function remarksText(TransactNum){
             // alert(`isAccepted: ${isAccepted}; isDenied: ${isDenied}`)
             // Check if isAccepted is 0 and isDenied is 1
@@ -602,6 +607,32 @@
                 // Set placeholder text for providing remarks
                 $('#inputReason' + TransactNum).attr('placeholder', 'Please provide remarks');
             }
+        }
+
+        function updateStatus(TransactionID,IsApprove){
+            $.ajax({
+                url: 'update_approveconsult.php',
+                type: 'POST',
+                data: { TransactionID: TransactionID,
+                    IsApprove: IsApprove
+                 },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response)
+                    // if (response.length > 0){
+                    //     $.each(response, function(i, field){
+
+                    //     })
+                    // }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText)
+                    console.error(status)
+                    console.error(error)
+                    console.error('Failed to load consult cards');
+                }
+            });
+
         }
 
     </script>

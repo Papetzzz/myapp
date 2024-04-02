@@ -37,19 +37,22 @@
         
         // Modify your SQL query to order the results based on the selected criteria and direction
         $search = "SELECT
-                    a.TransactionID,
-                    u.Name,
-                    s.Description as Section,
-                    a.Purpose as Purpose,
-                    a.RequestedDate as Date,
-					a.TransactionDate as DateSubmitted
-                    FROM Transactions_table a
-                    join Users_table u on a.UserID = u.UserID
-                    join Section_table s on a.SectionID = s.SectionID
-                    where TransactionModeID = 1
-                        AND a.ProfessorID = ".$_SESSION['UserID']." AND
-                        a.TransactionDate BETWEEN '$startDate' AND '$endDate'
-                        ORDER BY $orderBy $direction;"; // Dynamically order the results based on $orderBy and $direction
+            a.TransactionID,
+            u.Name,
+            s.Description as Section,
+            a.Purpose as Purpose,
+            a.RequestedDate as Date,
+            a.TransactionDate as DateSubmitted
+            FROM Transactions_table a
+            JOIN Users_table u ON a.UserID = u.UserID
+            JOIN Section_table s ON a.SectionID = s.SectionID
+            JOIN Status_Table st ON a.StatusID = st.StatusID
+            WHERE TransactionModeID = 1
+                AND a.ProfessorID = ".$_SESSION['UserID']." 
+                AND st.Code = '".$statusCode."' 
+                AND a.TransactionDate BETWEEN '$startDate' AND '$endDate'
+            ORDER BY $orderBy $direction;"; 
+            // Dynamically order the results based on $orderBy and $direction
 
         // Execute the SQL query and fetch the results as before
         $result = sqlsrv_query($conn, $search);

@@ -495,7 +495,7 @@
                             
                             </div>
                             <!-- type="submit" -->
-                            <butto class="btn btn-primary w-100" id="dCFormSubmitBtn">Submit</button>
+                            <button class="btn btn-primary w-100" id="dCFormSubmitBtn">Submit</button>
                         </form>
                     </div>
                 </div>
