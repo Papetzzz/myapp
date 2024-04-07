@@ -313,162 +313,167 @@
 
 
         <main role="main" id="main" class="main pb-3">
-            <section class="section dashboard">
-                <div class="row justify-content-center">
-                    <div class=" col-12">
-                        <div class="card">
-                            <div class="card-body position-relative">
-                                <div class="position-absolute top-0 end-0">
-                                    <!-- <i class="bi bi-three-dots p-2 text-secondary"></i> -->
-                                    
-                                        <a class="icon" href="#" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots p-2 pe-3 text-secondary"></i></a>
-                                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" data-popper-placement="bottom-end" style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0px, 29.6px, 0px);">
-                                            <li class="dropdown-header text-start">
-                                            <h6>Filter</h6>
-                                            </li>
-
-                                            <li><a class="dropdown-item" onclick="updateApprovedTable(event,'a')">Today</a></li>
-                                            <li><a class="dropdown-item" onclick="updateApprovedTable(event,'b')">This Week</a></li>
-                                            <li><a class="dropdown-item" onclick="updateApprovedTable(event,'c')">This Month</a></li>
-                                        </ul>
-                                </div>  
-                                <h5 class="card-title">Approved Consultation Requests</h5>
-                                <div class="overflow-auto">
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <div class="row mb-3">
-                                                <label class="col-sm-3 col-form-label">Order By:</label>
-                                                <div class="col-sm-9">
-                                                    <select class="form-select" aria-label="Default select example" id="orderByApprovedSelect">
-                                                        <option value="Name">Name</option>
-                                                        <option value="Section">Section</option>
-                                                        <option value="Purpose">Purpose</option>
-                                                        <option value="Date">Requested Date</option>
-                                                        <option value="DateSubmitted" selected>Date Submitted</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="row mb-3">
-                                                <div class="col-sm-6">
-                                                    <select class="form-select" aria-label="Default select example" id="orderApprovedSelect">
-                                                        <option value="ASC" >Ascending</option>
-                                                        <option value="DESC" selected>Descending</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                    <table class="table table-bordered border-primary">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">#</th>
-                                                <th scope="col">Name</th>
-                                                <th scope="col">Section</th>
-                                                <th scope="col">Purpose</th>
-                                                <th scope="col">Requested Date</th>
-                                                <th scope="col">Requested Time</th>
-                                                <th scope="col">Date Submitted</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody id="tbodyApprovedTable">
-                                        
-                                
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                    
-
+            <div class="row mb-2 d-md-block d-lg-none">
+                <div class="col-6">
+                    <a class="btn btn-primary w-100 h-100" href="#orderByApprovedSelect">Go To Approved</a>
                 </div>
-            </section>
-            <section class="section dashboard">
-                <div class="row justify-content-center">
-                    <div class=" col-12">
-                        <div class="card">
-                            <div class="card-body position-relative">
-                                <div class="position-absolute top-0 end-0">
-                                    <!-- <i class="bi bi-three-dots p-2 text-secondary"></i> -->
-                                    
-                                        <a class="icon" href="#" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots p-2 pe-3 text-secondary"></i></a>
-                                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" data-popper-placement="bottom-end" style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0px, 29.6px, 0px);">
-                                            <li class="dropdown-header text-start">
-                                            <h6>Filter</h6>
-                                            </li>
-
-                                            <li><a class="dropdown-item" onclick="updateTable(event,'a')">Today</a></li>
-                                            <li><a class="dropdown-item" onclick="updateTable(event,'b')">This Week</a></li>
-                                            <li><a class="dropdown-item" onclick="updateTable(event,'c')">This Month</a></li>
-                                        </ul>
-                                </div>  
-                                <h5 class="card-title">Other Consultation Requests</h5>
-                                <div class="overflow-auto">
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <div class="row mb-3">
-                                                <label class="col-sm-3 col-form-label">Order By:</label>
-                                                <div class="col-sm-9">
-                                                    <select class="form-select" aria-label="Default select example" id="orderByCSelect">
-                                                        <option value="Name">Name</option>
-                                                        <option value="Section">Section</option>
-                                                        <option value="Purpose">Purpose</option>
-                                                        <option value="Date">Requested Date</option>
-                                                        <option value="DateSubmitted" selected>Date Submitted</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="row mb-3">
-                                                <div class="col-sm-6">
-                                                    <select class="form-select" aria-label="Default select example" id="orderCSelect">
-                                                        <option value="ASC" >Ascending</option>
-                                                        <option value="DESC" selected>Descending</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
-                                    <table class="table table-bordered border-primary">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">#</th>
-                                                <th scope="col">Name</th>
-                                                <th scope="col">Section</th>
-                                                <th scope="col">Purpose</th>
-                                                <th scope="col">Requested Date</th>
-                                                <th scope="col">Requested Time</th>
-                                                <th scope="col">Date Submitted</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody id="tbodyCTable">
-                                        
-                                
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                    
-
+                <div class="col-6">
+                    <a class="btn btn-primary w-100  h-100" href="#orderByCSelect">Go To Others</a>
                 </div>
-            </section>
-            
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <section class="section dashboard">
+                        <div class="row justify-content-center">
+                            <div class=" col-12">
+                                <div class="card">
+                                    <div class="card-body position-relative">
+                                        <div class="position-absolute top-0 end-0">
+                                            <!-- <i class="bi bi-three-dots p-2 text-secondary"></i> -->
+                                            
+                                                <a class="icon" href="#" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots p-2 pe-3 text-secondary"></i></a>
+                                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" data-popper-placement="bottom-end" style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0px, 29.6px, 0px);">
+                                                    <li class="dropdown-header text-start">
+                                                    <h6>Filter</h6>
+                                                    </li>
+
+                                                    <li><a class="dropdown-item" onclick="updateApprovedTable(event,'a')">Today</a></li>
+                                                    <li><a class="dropdown-item" onclick="updateApprovedTable(event,'b')">This Week</a></li>
+                                                    <li><a class="dropdown-item" onclick="updateApprovedTable(event,'c')">This Month</a></li>
+                                                </ul>
+                                        </div>  
+                                        <h5 class="card-title">Approved Consultation Requests</h5>
+                                        <div class="overflow-auto">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="row mb-3">
+                                                        <label class="col-sm-3 col-form-label">Order By:</label>
+                                                        <div class="col-sm-9">
+                                                            <select class="form-select" aria-label="Default select example" id="orderByApprovedSelect">
+                                                                <option value="Name">Name</option>
+                                                                <option value="Section">Section</option>
+                                                                <option value="Purpose">Purpose</option>
+                                                                <option value="Date">Requested Date</option>
+                                                                <option value="DateSubmitted" selected>Date Submitted</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="row mb-3">
+                                                        <div class="col-sm-6">
+                                                            <select class="form-select" aria-label="Default select example" id="orderApprovedSelect">
+                                                                <option value="ASC" >Ascending</option>
+                                                                <option value="DESC" selected>Descending</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                            <table class="table table-bordered border-primary">
+                                                <!-- <thead>
+                                                    <tr>
+                                                        <th scope="col">#</th>
+                                                        <th scope="col">Name</th>
+                                                        <th scope="col">Section</th>
+                                                        <th scope="col">Purpose</th>
+                                                        <th scope="col">Requested Date</th>
+                                                        <th scope="col">Requested Time</th>
+                                                        <th scope="col">Date Submitted</th>
+                                                    </tr>
+                                                </thead> -->
+
+                                                <tbody id="tbodyApprovedTable">
+                                                
+                                        
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                        </div>
+                    </section>
+                </div>
+                <div class="col-md-6">
+                    <section class="section dashboard">
+                        <div class="row justify-content-center">
+                            <div class=" col-12">
+                                <div class="card">
+                                    <div class="card-body position-relative">
+                                        <div class="position-absolute top-0 end-0">
+                                            <!-- <i class="bi bi-three-dots p-2 text-secondary"></i> -->
+                                            
+                                                <a class="icon" href="#" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots p-2 pe-3 text-secondary"></i></a>
+                                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" data-popper-placement="bottom-end" style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(0px, 29.6px, 0px);">
+                                                    <li class="dropdown-header text-start">
+                                                    <h6>Filter</h6>
+                                                    </li>
+
+                                                    <li><a class="dropdown-item" onclick="updateTable(event,'a')">Today</a></li>
+                                                    <li><a class="dropdown-item" onclick="updateTable(event,'b')">This Week</a></li>
+                                                    <li><a class="dropdown-item" onclick="updateTable(event,'c')">This Month</a></li>
+                                                </ul>
+                                        </div>  
+                                        <h5 class="card-title">Other Consultation Requests</h5>
+                                        <div class="overflow-auto">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="row mb-3">
+                                                        <label class="col-sm-3 col-form-label">Order By:</label>
+                                                        <div class="col-sm-9">
+                                                            <select class="form-select" aria-label="Default select example" id="orderByCSelect">
+                                                                <option value="Name">Name</option>
+                                                                <option value="Section">Section</option>
+                                                                <option value="Purpose">Purpose</option>
+                                                                <option value="Date">Requested Date</option>
+                                                                <option value="DateSubmitted" selected>Date Submitted</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="row mb-3">
+                                                        <div class="col-sm-6">
+                                                            <select class="form-select" aria-label="Default select example" id="orderCSelect">
+                                                                <option value="ASC" >Ascending</option>
+                                                                <option value="DESC" selected>Descending</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                            <table class="table table-bordered border-primary">
+                                                <tbody id="tbodyCTable">
+                                                
+                                        
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                        </div>
+                    </section>
+                </div>
+            </div>
         </main>
 
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
+    <!-- HTML TEMPLATES HERE -->
+    <div id="Templates" style="display:none;">
+        
+    </div>
     <!-- Vendor JS Files -->
     <script src="../assets/vendor/apexcharts/apexcharts.min.js"></script>
     <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -492,7 +497,7 @@
             updateTable(event,null,'N')
         });
         $('#orderByApprovedSelect, #orderApprovedSelect').change(function(){
-            updateTable(event,null,'A')
+            updateApprovedTable(event,null,'A')
         });
 
         // Function to update the table based on the selected ordering and direction
@@ -514,7 +519,6 @@
                  },
                 dataType: 'html',
                 success: function(response) {
-                    console.log(response)
 
                     // Replace the existing table with the updated table
                     $('#tbodyApprovedTable').html(response);
@@ -542,7 +546,6 @@
                  },
                 dataType: 'html',
                 success: function(response) {
-                    console.log(response)
 
                     // Replace the existing table with the updated table
                     $('#tbodyCTable').html(response);

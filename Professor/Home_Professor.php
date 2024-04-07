@@ -415,22 +415,27 @@
 
                 </div>
                 <div id="divConsultationCards">
-                    <div class="row consultCardToday">
+                    <div class="row consultCardToday" style="display: none">
                         <h5 class="card-title mx-3">Requested Today</h5>
                     </div>
-                    <hr>
-                    <div class="row consultCardThisWeek">
+                    <div class="row consultCardThisWeek" style="display: none">
+                        <hr>
                         <h5 class="card-title mx-3">Requested This Week</h5>
-
                     </div>
-                    <hr>
-                    <div class="row consultCardOthers">
+                    <div class="row consultCardOthers" style="display: none">
+                        <hr>
                         <h5 class="card-title mx-3">Requested Others</h5>
-
                     </div>
                 </div>
 
             </section>
+            
+            <div id="alertSuccessTemplate">
+                <div class="alert alert-success alert-dismissible fade show" role="alert" id="alertTransactNum">
+                        Message
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
             <div id="divConsultCardsTemplate">
                 <div class="col-md-6" id="consultCardTransactNum">
                         <div class="card">
@@ -551,11 +556,14 @@
                             sevenDaysAgo: ${sevenDaysAgo}
                             ${submittedDate.toDateString() === today.toDateString()}`)
                             if (submittedDate.toDateString() === today.toDateString()){
+                                $('#divConsultationCards .consultCardToday').show('medium')
                                 $('#divConsultationCards .consultCardToday').append(card)
                             } else if (submittedDate >= sevenDaysAgo && submittedDate <= today) {
                                 // Append the card to the specified div
+                                $('#divConsultationCards .consultCardThisWeek').show('medium');
                                 $('#divConsultationCards .consultCardThisWeek').append(card);
                             } else {
+                                $('#divConsultationCards .consultCardOthers').show('medium');
                                 $('#divConsultationCards .consultCardOthers').append(card);
                             }
                         })
@@ -609,31 +617,48 @@
             }
         }
 
-        function updateStatus(TransactionID,IsApprove){
-            $.ajax({
-                url: 'update_approveconsult.php',
-                type: 'POST',
-                data: { TransactionID: TransactionID,
-                    IsApprove: IsApprove
-                 },
-                dataType: 'json',
-                success: function(response) {
-                    console.log(response)
-                    // if (response.length > 0){
-                    //     $.each(response, function(i, field){
+    function updateStatus(TransactionID, IsApprove) {
+        // Alert is useful for debugging, but remove it in the final version
+        var remarks = $('#inputReason'+TransactionID).val();
+        alert(`TransactionID: ${TransactionID}, IsApprove: ${IsApprove},remarks: ${remarks}`);
+        
+        $.ajax({
+            url: 'update_approveconsult.php',
+            type: 'POST',
+            data: {
+                TransactionID: TransactionID,
+                IsApprove: IsApprove,
+                Remarks: remarks
+            },
+            dataType: 'json',
+            success: function(response) {
+                console.log(response);
 
-                    //     })
-                    // }
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText)
-                    console.error(status)
-                    console.error(error)
-                    console.error('Failed to load consult cards');
-                }
-            });
+                // Handle response data if needed
+                // if (response.length > 0) {
+                    // $.each(response, function(i, field) {
+                        $('#submitButton'+TransactionID).hide();
+                        var alert = $('#alertSuccessTemplate').html()
+                        
+                        alert=alert.replace('Message',response.message)
+                        alert = alert.replace('TransactNum',TransactionID)
+                        $('#consultCard'+TransactionID+' .card-body').append(alert)
+                        setTimeout(function() {
+                            $('#alert' + TransactionID).hide('slow');
+                        }, 10000);
 
-        }
+                    // });
+                // }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                console.error(status);
+                console.error(error);
+                console.error('Failed to update status');
+            }
+        });
+    }
+
 
     </script>
 </body>

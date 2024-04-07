@@ -65,22 +65,48 @@
             // Output option for each row
             $counter++;
 
-            echo  '<tr onclick="goToDReceipt('.$row['TransactionID'].')">';
-            echo '<th scope="row">'.$counter.'</th>';
-            echo '<td>'.$row['Name'].'</td>';
-            echo '<td>'.$row['Section'].'</td>';
-            echo '<td>'.$row['DocumentName'].'</td>';
-            echo '<td>'.$row['Date']->format('M d, Y h:i a') .'</td>';
+            // echo  '<tr onclick="goToDReceipt('.$row['TransactionID'].')">';
+            // echo '<th scope="row">'.$counter.'</th>';
+            // echo '<td>'.$row['Name'].'</td>';
+            // echo '<td>'.$row['Section'].'</td>';
+            // echo '<td>'.$row['DocumentName'].'</td>';
+            // echo '<td>'.$row['Date']->format('M d, Y h:i a') .'</td>';
         
+            // echo '</tr>';
+            $table_color='';
+            if ($counter%2 == 0){
+                $table_color='table-active';
+            }
+            echo '<tr onclick="goToDReceipt('.$row['TransactionID'].')"  style="border-top-width: thick" class='.$table_color.'>';
+            echo '<th rowspan="4">'.$counter.'</th>';
+            echo '<th scope="col">Name</th>';
+            echo '<td scope="row">'.$row['Name'].'</td>';
+            echo '</tr>';
+            echo '<tr onclick="goToDReceipt('.$row['TransactionID'].')"  class='.$table_color.'>';
+            echo '<th scope="col">Section</th>';
+            echo '<td scope="row">'.$row['Section'].'</td>';
+            echo '</tr>';
+            echo '<tr onclick="goToDReceipt('.$row['TransactionID'].')" class='.$table_color.'>';
+            echo '<th scope="col">Document Name</th>';
+            echo '<td scope="row">'.$row['DocumentName'].'</td>';
+            echo '</tr>';
+            echo '<tr onclick="goToDReceipt('.$row['TransactionID'].')" class='.$table_color.'>';
+            echo '<th scope="col">Date</th>';
+            if ($row['Date'] != null) {
+                echo '<td scope="row">'.$row['Date']->format('M d, Y') .'<br>'.$row['Date']->format('h:i a') .'</td>';
+            } 
+            else {
+                echo '<td></td>'; // Or any other message you want to display for null values
+            }
             echo '</tr>';
         }
         if ($counter == 0){
             echo '<tr>';
-            echo '<th colspan="5" class="text-center text-secondary"><i class="bi bi-info-circle me-1"></i>No records to show. </th>';
+            echo '<th colspan="3" class="text-center text-secondary"><i class="bi bi-info-circle me-1"></i>No records to show. </th>';
             echo '</tr>';
         } else {
             echo '<tr>';
-            echo '<th colspan="5" class="text-center text-secondary">---------- Nothing Follows ----------</th>';
+            echo '<th colspan="3" class="text-center text-secondary">---------- Nothing Follows ----------</th>';
             echo '</tr>';
         }
         

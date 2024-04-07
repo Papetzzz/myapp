@@ -368,7 +368,7 @@
                                     </div>
 
                                     <table class="table table-bordered border-primary">
-                                        <thead>
+                                        <!-- <thead>
                                             <tr>
                                                 <th scope="col">#</th>
                                                 <th scope="col">Name</th>
@@ -376,10 +376,10 @@
                                                 <th scope="col">Document Name</th>
                                                 <th scope="col">Date</th>
                                             </tr>
-                                        </thead>
+                                        </thead> -->
 
                                         <tbody id="tbodyDTable">
-                                        
+                                            
                                         </tbody>
                                     </table>
                                 </div>

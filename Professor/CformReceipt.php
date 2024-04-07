@@ -23,13 +23,15 @@ if(isset($_GET['TransactionId'])) {
 	t.Purpose,
 	u_p.Name as Prof_Name,
     t.RequestedDate as Date,
-    t.TransactionDate as DateSubmitted
-    
+    t.TransactionDate as DateSubmitted,
+    st.Description as Status,
+	t.DateAccepted
     from Transactions_table t
     join Users_table u_n on t.UserID = u_n.UserID
     join Section_table s on s.SectionID = t.SectionID
 	join Users_table u_p on t.ProfessorID = u_p.UserID
-    where TransactionID = ?";
+    join Status_Table st on st.StatusID = t.StatusID
+	where TransactionID = ?";
     $params = array($transactionId);
     $result = sqlsrv_query($conn, $query, $params);
 
@@ -49,6 +51,11 @@ if(isset($_GET['TransactionId'])) {
     $requestedDateTime = $transaction["Date"]; // Assuming 'Date' is the key for 'RequestedDate'
     $requestedDate = date_format($requestedDateTime, 'M d, Y'); // Get date in 'Y-m-d' format
     $requestedTime = date_format($requestedDateTime, 'h:i A'); // Get time in 'H:i:s' format
+    $StatusName = $transaction["Status"];
+    $Accepted = '';
+    if ($transaction['DateAccepted'] != null) {
+        $Accepted ='<span class="badge border-light border-1 text-black-50 mt-3">Accepted: '.date_format($requestedDateTime, 'M d, Y h:i A').'</span>';
+    }
     // Close the database connection
     sqlsrv_close($conn);
 }
@@ -373,56 +380,61 @@ else {
                         <div class="col-md-6">
                             <div class="card">
                                 <div class="card-body">
-                                    <h1 class="card-title text-center">Consultation Submission Receipt</h1>
-                                    <div id="divDFormReceiptAlerts">
-                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        <i class="bi bi-check-circle me-1"></i>Succesfully submitted document!
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </div>
-                                    </div><!--action="DFormButton.php" method="post" --> 
-                                
-                                        <div class="mb-3">
-                                            <label for="name" class="form-label"><b>Name: </b><?php echo $userName?></label>
-                                            
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <div class= "col-sm-6">
-                                                <label for="yearSelect" class="form-label">
-                                                    <b>Year Level: </b>
-                                                    <?php echo $Year ?>
-                                                </label>                                                
+                                    <?php 
+                                    echo $Accepted;
+                                    ?>
+                                    <div class="col-12">
+                                        <h1 class="card-title text-center">Consultation Submission Receipt</h1>
+                                        <!-- <div id="divDFormReceiptAlerts">
+                                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            <i class="bi bi-check-circle me-1"></i>Succesfully submitted document!
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div> -->
+                                        </div><!--action="DFormButton.php" method="post" --> 
+                                    
+                                            <div class="mb-3">
+                                                <label for="name" class="form-label"><b>Name: </b><?php echo $userName?></label>
+                                                
                                             </div>
-                                            <div class="col-sm-6">
-                                                <label for="name" class="form-label"><b>Section: </b><?php echo $Section_Desc?></label>                                            
-                                            </div>
-                                        </div>
 
-                                        <div class="mb-3">
-                                            <div class="col-sm-12">
-                                                <label for="section" class="form-label"><b>Requested Date: </b> <?php echo $requestedDate?></label>
-                                            </div>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <div class="col-sm-12">
-                                                <label for="section" class="form-label"><b>Requested Time: </b> <?php echo $requestedTime?></label>
-                                            </div>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="purpose" class="form-label"><b>Purpose of Submission: </b></label>
-                                            <div class="card-text">
-                                                <?php echo $Purpose?>
+                                            <div class="row mb-3">
+                                                <div class= "col-sm-6">
+                                                    <label for="yearSelect" class="form-label">
+                                                        <b>Year Level: </b>
+                                                        <?php echo $Year ?>
+                                                    </label>                                                
                                                 </div>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="pro" class="form-label"><b>Professor's Name: </b> Ma'am / Sir <?php echo $Prof_Name?></label>
-                                        </div>
-                                        <div class="text-end">
-                                            <button type="button" class="btn btn-primary" onclick="window.location.href='Home_Professor.php'">Go To Dashboard</button>
-                                        </div>
-                                        
+                                                <div class="col-sm-6">
+                                                    <label for="name" class="form-label"><b>Section: </b><?php echo $Section_Desc?></label>                                            
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <div class="col-sm-12">
+                                                    <label for="section" class="form-label"><b>Requested Date: </b> <?php echo $requestedDate?></label>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <div class="col-sm-12">
+                                                    <label for="section" class="form-label"><b>Requested Time: </b> <?php echo $requestedTime?></label>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="purpose" class="form-label"><b>Purpose of Submission: </b></label>
+                                                <div class="card-text">
+                                                    <?php echo $Purpose?>
+                                                    </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="pro" class="form-label"><b>Professor's Name: </b> Ma'am / Sir <?php echo $Prof_Name?></label>
+                                            </div>
+                                            <div class="text-end">
+                                                <button type="button" class="btn btn-primary" onclick="window.location.href='Home_Professor.php'">Go To Dashboard</button>
+                                            </div>
+                                            
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -447,10 +459,10 @@ else {
 
     <!-- Template Main JS File -->
     <script src="../assets/js/main.js"></script>
-    <script>
+    <!-- <script>
         setTimeout(function(){
             $('#divDFormReceiptAlerts').hide('slow')
         },10000);
-    </script>
+    </script> -->
     </body>
 </html>
