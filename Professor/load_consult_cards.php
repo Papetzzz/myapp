@@ -3,7 +3,7 @@
 session_start();
 
 // Get the selected ordering and direction from the AJAX request
-$orderBy = isset($_GET['orderBy']) ? $_GET['orderBy'] : 'Date';
+$orderBy = isset($_GET['orderBy']) ? $_GET['orderBy'] : 'DateSubmitted';
 $direction = isset($_GET['direction']) ? $_GET['direction'] : 'DESC';
 $dateFilter = isset($_GET['dateFilter']) ? $_GET['dateFilter'] : null;
 

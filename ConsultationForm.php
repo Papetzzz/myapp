@@ -1,6 +1,8 @@
 <?php
     session_start();
     $userName = $_SESSION['UserName'];
+    $IsAdmin = $_SESSION['IsAdmin'];
+
 ?>
 <!DOCTYPE html>
 
@@ -45,28 +47,28 @@
     <header id="header" class="header fixed-top d-flex align-items-center">
 
         <div class="d-flex align-items-center justify-content-between">
-            <a href="Home.html" class="logo d-flex align-items-center">
+            <a href="Home.php" class="logo d-flex align-items-center">
                 <img src="assets/img/logo.png" alt="">
                 <span style="font-size: 20px" class="d-none d-lg-block">CpE Communication</span>
             </a>
             <i class="bi bi-list toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
 
-        <div class="search-bar">
+        <!-- <div class="search-bar">
             <form class="search-form d-flex align-items-center" method="POST" action="#">
                 <input type="text" name="query" placeholder="Search" title="Enter search keyword">
                 <button type="submit" title="Search"><i class="bi bi-search"></i></button>
             </form>
-        </div><!-- End Search Bar -->
+        </div>--><!-- End Search Bar -->
 
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
 
-                <li class="nav-item d-block d-lg-none">
+                <!--<li class="nav-item d-block d-lg-none">
                     <a class="nav-link nav-icon search-bar-toggle " href="#">
                         <i class="bi bi-search"></i>
                     </a>
-                </li><!-- End Search Icon-->
+                </li>--><!-- End Search Icon-->
 
                 <li class="nav-item dropdown">
 
@@ -212,8 +214,8 @@
                 <li class="nav-item dropdown pe-3">
 
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                        <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-                        <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+                        <i class="fs-3 bi bi-person-circle"></i>
+                        <span class="d-none d-md-block dropdown-toggle ps-2"><?php echo $_SESSION['UserName']; ?></span>
                     </a><!-- End Profile Iamge Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
@@ -256,7 +258,7 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
+                            <a class="dropdown-item d-flex align-items-center" href="#" id="logoutButton">
                                 <i class="bi bi-box-arrow-right"></i>
                                 <span>Sign Out</span>
                             </a>
@@ -275,7 +277,7 @@
         <ul class="sidebar-nav" id="sidebar-nav">
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="Home.html">
+                <a class="nav-link collapsed" href="Home.php">
                     <i class="bi bi-grid"></i>
                     <span>Dashboard</span>
                 </a>
@@ -300,7 +302,11 @@
                 </ul>
             </li><!-- End Forms Nav -->
 
-         
+            <li class="nav-item" id="adminItem" style="display: none">
+                <a class="nav-link collapsed" href="Admin/Home_Admin.php">
+                    <i class="bi bi-shield-lock"></i><span>Admin Page</span>
+                </a>
+            </li>
 
         </ul>
 
@@ -495,7 +501,7 @@
                             
                             </div>
                             <!-- type="submit" -->
-                            <button class="btn btn-primary w-100" id="dCFormSubmitBtn">Submit</button>
+                            <button class="btn btn-primary w-100" id="dCFormSubmitBtn" onclick="submitCDocument(event)">Submit</button>
                         </form>
                     </div>
                 </div>
@@ -528,21 +534,18 @@
     <!-- My Scripts -->
     <script type="text/javascript">
 
-        $('#dCFormSubmitBtn').click(function(){
-            submitCDocument();
-        })
+        // $('#dCFormSubmitBtn').click(function(){
+        //     submitCDocument();
+        // })
         
-        function submitCDocument(){
+        function submitCDocument(event){
+            event.preventDefault();
             var sectionCSelect = $('#sectionCSelect').val()
             var professorId = $('#professorId').val()
             var purpose = $('#purpose').val()
             var requestedDate = $('#consultationDate').val()
             var requestedTime = $('#consultationTime').val()
-            alert(`sectionCSelect: ${sectionCSelect},
-            professorId: ${professorId},
-            purpose: ${purpose},
-            requestedDate: ${requestedDate},
-            requestedTime: ${requestedTime}`)
+            
             $.ajax({
                 url: 'CFormButton.php',
                 type: 'POST',
@@ -556,8 +559,6 @@
                 dataType: 'json',
                 success: function(response) {
                         console.log(response.message)
-                        alert(response.message)
-                        alert(response.TransactionID)
                         if(response.submitted){
                             window.location.href = 'CformReceipt.php?TransactionId=' + response.TransactionID;
                         }
@@ -572,6 +573,37 @@
         }
 
     </script>
-
+    <script>
+        $(function() {
+            $('#logoutButton').click(function() {
+                $.ajax({
+                    url: 'logout.php',
+                    method: 'POST',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            // Optional: Redirect the user to another page after logout
+                            window.location.href = 'LoginPage.php';
+                        } else {
+                            // Handle errors
+                            console.error('Logout failed');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+        });
+    </script>
+    <?php
+        if ($IsAdmin == 1){
+            echo '<script>';
+            echo '$(function() {';
+            echo '$("#adminItem").show();';
+            echo '});';
+            echo '</script>';
+        }
+    ?>
 </body>
 </html>

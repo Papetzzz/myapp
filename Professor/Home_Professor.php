@@ -1,3 +1,13 @@
+<?php
+session_start();
+$IsAdmin = $_SESSION['IsAdmin'];
+
+
+// $count_doc = countSubmission($conn);
+// $count_Sub = countConsultation($conn);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,21 +66,21 @@
             <i class="bi bi-list toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
 
-        <div class="search-bar">
+        <!-- <div class="search-bar">
             <form class="search-form d-flex align-items-center" method="POST" action="#">
                 <input type="text" name="query" placeholder="Search" title="Enter search keyword">
                 <button type="submit" title="Search"><i class="bi bi-search"></i></button>
             </form>
-        </div><!-- End Search Bar -->
+        </div>--><!-- End Search Bar -->
 
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
 
-                <li class="nav-item d-block d-lg-none">
+                <!--<li class="nav-item d-block d-lg-none">
                     <a class="nav-link nav-icon search-bar-toggle " href="#">
                         <i class="bi bi-search"></i>
                     </a>
-                </li><!-- End Search Icon-->
+                </li>--><!-- End Search Icon-->
 
                 <li class="nav-item dropdown">
 
@@ -216,14 +226,14 @@
                 <li class="nav-item dropdown pe-3">
 
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                        <img src="../assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-                        <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+                        <i class="fs-3 bi bi-person-circle"></i>
+                        <span class="d-none d-md-block dropdown-toggle ps-2"><?php echo $_SESSION['UserName']; ?></span>
                     </a><!-- End Profile Iamge Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                         <li class="dropdown-header">
-                            <h6>Kevin Anderson</h6>
-                            <span>Web Designer</span>
+                            <h6><?php echo $_SESSION['UserName']; ?></h6>
+                            <span>Professor</span>
                         </li>
                         <li>
                             <hr class="dropdown-divider">
@@ -260,7 +270,7 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
+                            <a class="dropdown-item d-flex align-items-center" href="#" id="logoutButton">
                                 <i class="bi bi-box-arrow-right"></i>
                                 <span>Sign Out</span>
                             </a>
@@ -303,7 +313,11 @@
 
                 </ul>
             </li><!-- End Forms Nav -->
-
+            <li class="nav-item" id="adminItem" style="display: none">
+                <a class="nav-link collapsed" href="../Admin/Home_Admin.php">
+                    <i class="bi bi-shield-lock"></i><span>Admin Page</span>
+                </a>
+            </li>
 
 
         </ul>
@@ -344,7 +358,7 @@
 
                 <div class="row justify-content-center">
                     <div class="col-xxl-4 col-md-6">
-                        <div class="card pointer info-card sales-card" onclick="window.location.href='DocumentList.php'">
+                        <div class="card pointer info-card sales-card">
 
                             <div class="filter">
                                 <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
@@ -359,7 +373,7 @@
                                 </ul>
                             </div>
 
-                            <div class="card-body"style="min-height:171px">
+                            <div class="card-body"style="min-height:171px" onclick="window.location.href='DocumentList.php'">
                                 <h5 class="card-title" style="min-height:5rem">Documents Submission List <span id="documentsFilterResult">| Today</span></h5>
 
                                 <div class="d-flex align-items-center">
@@ -367,7 +381,7 @@
                                         <i class="bi bi-file-earmark-text"></i>
                                     </div>
                                     <div class="ps-3">
-                                        <h6>0</h6>
+                                        <h6 id="h6CountSub"></h6>
                                     <!-- @*  <span class="text-success small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">increase</span> *@ -->
 
                                     </div>
@@ -378,7 +392,7 @@
 
                     </div>
                     <div class="col-xxl-4 col-md-6">
-                        <div class="card pointer info-card sales-card" onclick="window.location.href='ConsultationList.php'">
+                        <div class="card pointer info-card sales-card">
 
 
                             <div class="filter">
@@ -394,7 +408,7 @@
                                 </ul>
                             </div>
 
-                            <div class="card-body"style="min-height:171px">
+                            <div class="card-body"style="min-height:171px" onclick="window.location.href='ConsultationList.php'">
                                 <h5 class="card-title" style="min-height:5rem">Consultation List <span>| Today</span></h5>
 
                                 <div class="d-flex align-items-center">
@@ -402,7 +416,7 @@
                                         <i class="bi bi-file-earmark-text"></i>
                                     </div>
                                     <div class="ps-3">
-                                        <h6>0</h6>
+                                        <h6 id="h6CountConsult"></h6>
                                         <!-- @*  <span class="text-success small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">increase</span> *@ -->
 
                                     </div>
@@ -429,47 +443,48 @@
                 </div>
 
             </section>
-            
-            <div id="alertSuccessTemplate">
-                <div class="alert alert-success alert-dismissible fade show" role="alert" id="alertTransactNum">
-                        Message
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div id="professorTemplates" style="display: none">
+                <div id="alertSuccessTemplate">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" id="alertTransactNum">
+                            Message
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 </div>
-            </div>
-            <div id="divConsultCardsTemplate">
-                <div class="col-md-6" id="consultCardTransactNum">
-                        <div class="card">
-                            <div class="card-body text-center">
-                                <div class="text-start"><span class="badge border-light border-1 text-black-50 mt-3">submittedDate</span></div>
-                                <h5 class="card-title pt-0">Section_Desc - userName</h5>
-                                <h6 class="card-subtitle mb-2 text-muted"><b>Purpose: </b>$Purpose</h6>
-                                <h6 class="card-subtitle mb-2 text-muted"><b>Date Suggested: </b>requestedDate</h6>
-                                <!-- <h6 class="card-subtitle mb-2 text-muted"><b>Date Submitted: </b>submittedDate</h6> -->
+                <div id="divConsultCardsTemplate">
+                    <div class="col-md-6" id="consultCardTransactNum">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <div class="text-start"><span class="badge border-light border-1 text-black-50 mt-3">submittedDate</span></div>
+                                    <h5 class="card-title pt-0">Section_Desc - userName</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted"><b>Purpose: </b>$Purpose</h6>
+                                    <h6 class="card-subtitle mb-2 text-muted"><b>Date Suggested: </b>requestedDate</h6>
+                                    <!-- <h6 class="card-subtitle mb-2 text-muted"><b>Date Submitted: </b>submittedDate</h6> -->
 
-                                <div class="col-12 text-start mb-3" id="divReasonTransactNum" style="display: none;">
-                                    <label for="inputReasonTransactNum" class="form-label">Remarks:</label>
-                                    <textarea type="text" class="form-control" id="inputReasonTransactNum" placeholder="Please provide reason for declining"></textarea>
-                                </div>
-                                <hr>
-                                <div class="row" id="rowAcceptDeclineTransactNum">
-                                    <p class="card-text col-md-6 mb-1">Do you want to accept this consultation?</p>
-                                    <div class="card-text col me-2">
-                                        <button class="btn btn-primary col-sm-5 me-1" onclick="acceptRequest(TransactNum)">
-                                            <i class="bi bi-check-circle me-1"></i>Accept
-                                        </button>
-                                        <button class="btn btn-danger  col-sm-5" onclick="declineRequest(TransactNum)">
-                                            <i class="bi bi-x-circle me-1"></i>Decline
+                                    <div class="col-12 text-start mb-3" id="divReasonTransactNum" style="display: none;">
+                                        <label for="inputReasonTransactNum" class="form-label">Remarks:</label>
+                                        <textarea type="text" class="form-control" id="inputReasonTransactNum" placeholder="Please provide reason for declining"></textarea>
+                                    </div>
+                                    <hr>
+                                    <div class="row" id="rowAcceptDeclineTransactNum">
+                                        <p class="card-text col-md-6 mb-1">Do you want to accept this consultation?</p>
+                                        <div class="card-text col me-2">
+                                            <button class="btn btn-primary col-sm-5 me-1" onclick="acceptRequest(TransactNum)">
+                                                <i class="bi bi-check-circle me-1"></i>Accept
+                                            </button>
+                                            <button class="btn btn-danger  col-sm-5" onclick="declineRequest(TransactNum)">
+                                                <i class="bi bi-x-circle me-1"></i>Decline
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="submitButtonTransactNum" style="display: none;">
+                                        <button class="btn btn-primary col-sm-5 me-1" >
+                                            <i class="bi bi-check-circle me-1"></i>Submit Response
                                         </button>
                                     </div>
                                 </div>
-                                <div id="submitButtonTransactNum" style="display: none;">
-                                    <button class="btn btn-primary col-sm-5 me-1" >
-                                        <i class="bi bi-check-circle me-1"></i>Submit Response
-                                    </button>
-                                </div>
                             </div>
                         </div>
-                    </div>
+                </div>
             </div>
         </main>
 
@@ -492,97 +507,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 
-
+    
     <script>
-        function declineRequest(TransactionID) {
-            isAccepted = 0;
-            isDenied = 1;
-            $('#divReason'+TransactionID).show('slow')
-            $('#submitButton'+TransactionID).show('slow')
-            $('#rowAcceptDecline'+TransactionID).hide('slow')
-            remarksText(TransactionID)
-            $('#submitButton'+TransactionID).click(function(){
-
-            })
-        }
-        // Function to update the table based on the selected ordering and direction
-        function updateTable(e,dateRange) {
-            // Get the selected ordering and direction
-            var orderBy = $('#orderByCSelect').val();
-            var direction = $('#orderCSelect').val();
-            dateRange = dateRange ?? null;
-            console.log(dateRange)
-            // Perform an AJAX request to fetch the updated data from the server
-            // Send the selected ordering and direction to the server
-            $.ajax({
-                url: 'load_consult_cards.php',
-                type: 'GET',
-                data: { orderBy: orderBy,
-                    direction: direction,
-                    dateFilter: dateRange
-                 },
-                dataType: 'json',
-                success: function(response) {
-                    console.log(response)
-                    if (response.length > 0){
-                        $.each(response, function(i, field){
-
-                            var card = $('#divConsultCardsTemplate').html();
-                            card = card.replace('Section_Desc',field.Section)
-                            card = card.replace('userName',field.Name)
-                            card = card.replace('$Purpose',field.Purpose)
-                            var sqlDateTimeString = field.Date.date
-                            var formattedDateTime = new Date(sqlDateTimeString.replace(/-/g, '/')).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true});
-
-                            card = card.replace('requestedDate',formattedDateTime)
-                            card = card.replace(/TransactNum/g,field.TransactionID)
-                            var submittedDateTime = field.DateSubmitted.date
-                            var formattedSubmittedDate = new Date(submittedDateTime.replace(/-/g, '/')).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false});
-
-                            card = card.replace(/submittedDate/g,formattedSubmittedDate)
-                            // Get today's date
-                            let today = new Date();
-
-                            // Assuming field.DateSubmitted is in the format "YYYY-MM-DD", you can parse it into a Date object
-                            let submittedDate = new Date(field.DateSubmitted.date);
-                            let sevenDaysAgo = new Date(today);
-                            sevenDaysAgo.setDate(today.getDate() - 7);
-                            let yearAgo = new Date(today);
-                            yearAgo.setDate(today.getDate() - 365);
-
-                            console.log(`field.DateSubmitted: ${field.DateSubmitted}
-                            submittedDate: ${submittedDate}
-                            ${submittedDate.toDateString()} === ${today.toDateString()}
-                            sevenDaysAgo: ${sevenDaysAgo}
-                            ${submittedDate.toDateString() === today.toDateString()}`)
-                            if (submittedDate.toDateString() === today.toDateString()){
-                                $('#divConsultationCards .consultCardToday').show('medium')
-                                $('#divConsultationCards .consultCardToday').append(card)
-                            } else if (submittedDate >= sevenDaysAgo && submittedDate <= today) {
-                                // Append the card to the specified div
-                                $('#divConsultationCards .consultCardThisWeek').show('medium');
-                                $('#divConsultationCards .consultCardThisWeek').append(card);
-                            } else {
-                                $('#divConsultationCards .consultCardOthers').show('medium');
-                                $('#divConsultationCards .consultCardOthers').append(card);
-                            }
-                        })
-                    }
-
-                    // Replace the existing table with the updated table
-                    // $('#tbodyCTable').html(response);
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText)
-                    console.error(status)
-                    console.error(error)
-                    console.error('Failed to load consult cards');
-                }
-            });
-        }
-
-        // Call the updateTable function once initially to populate the table
-        updateTable();
+        var countconsult = 0;
+        var countsubmit = 0;
+        
         var isAccepted = 0;
         var isDenied = 0;
         function acceptRequest(TransactionID){
@@ -617,49 +546,96 @@
             }
         }
 
-    function updateStatus(TransactionID, IsApprove) {
-        // Alert is useful for debugging, but remove it in the final version
-        var remarks = $('#inputReason'+TransactionID).val();
-        alert(`TransactionID: ${TransactionID}, IsApprove: ${IsApprove},remarks: ${remarks}`);
-        
-        $.ajax({
-            url: 'update_approveconsult.php',
-            type: 'POST',
-            data: {
-                TransactionID: TransactionID,
-                IsApprove: IsApprove,
-                Remarks: remarks
-            },
-            dataType: 'json',
-            success: function(response) {
-                console.log(response);
+        function updateStatus(TransactionID, IsApprove) {
+            // Alert is useful for debugging, but remove it in the final version
+            var remarks = $('#inputReason'+TransactionID).val();
+            
+            $.ajax({
+                url: 'update_approveconsult.php',
+                type: 'POST',
+                data: {
+                    TransactionID: TransactionID,
+                    IsApprove: IsApprove,
+                    Remarks: remarks
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
 
-                // Handle response data if needed
-                // if (response.length > 0) {
-                    // $.each(response, function(i, field) {
-                        $('#submitButton'+TransactionID).hide();
-                        var alert = $('#alertSuccessTemplate').html()
-                        
-                        alert=alert.replace('Message',response.message)
-                        alert = alert.replace('TransactNum',TransactionID)
-                        $('#consultCard'+TransactionID+' .card-body').append(alert)
-                        setTimeout(function() {
-                            $('#alert' + TransactionID).hide('slow');
-                        }, 10000);
+                    // Handle response data if needed
+                    // if (response.length > 0) {
+                        // $.each(response, function(i, field) {
+                            $('#submitButton'+TransactionID).hide();
+                            var alert = $('#alertSuccessTemplate').html()
+                            
+                            alert=alert.replace('Message',response.message)
+                            alert = alert.replace('TransactNum',TransactionID)
+                            $('#consultCard'+TransactionID+' .card-body').append(alert)
+                            setTimeout(function() {
+                                $('#alert' + TransactionID).hide('slow');
+                            }, 10000);
 
-                    // });
-                // }
-            },
-            error: function(xhr, status, error) {
-                console.error(xhr.responseText);
-                console.error(status);
-                console.error(error);
-                console.error('Failed to update status');
-            }
-        });
+                        // });
+                    // }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    console.error(status);
+                    console.error(error);
+                    console.error('Failed to update status');
+                }
+            });
+        }
+
+        function declineRequest(TransactionID) {
+            isAccepted = 0;
+            isDenied = 1;
+            $('#divReason'+TransactionID).show('slow')
+            $('#submitButton'+TransactionID).show('slow')
+            $('#rowAcceptDecline'+TransactionID).hide('slow')
+            remarksText(TransactionID)
+            $('#submitButton'+TransactionID).click(function(){
+
+            })
+        }
+
+
+    </script>
+
+    <script src="../myScripts/checkRecords.js"></script>
+    
+    <?php
+    if ($IsAdmin == 1){
+        echo '<script>';
+        echo '$(function() {';
+        echo '$("#adminItem").show();';
+        echo '});';
+        echo '</script>';
     }
+    ?>
 
-
+    <script>
+        $(function() {
+            $('#logoutButton').click(function() {
+                $.ajax({
+                    url: '../logout.php',
+                    method: 'POST',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            // Optional: Redirect the user to another page after logout
+                            window.location.href = '../LoginPage.php';
+                        } else {
+                            // Handle errors
+                            console.error('Logout failed');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>

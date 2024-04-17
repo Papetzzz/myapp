@@ -1,7 +1,7 @@
 <?php
-// Ensure TransactionId parameter is provided
-if(isset($_GET['TransactionId'])) {
-    session_start();
+session_start();
+if(isset($_GET['TransactionId']) && $_GET['TransactionId'] !== null) {
+    
     
     $transactionId = $_GET['TransactionId'];
 
@@ -60,8 +60,8 @@ if(isset($_GET['TransactionId'])) {
     sqlsrv_close($conn);
 }
 else {
-    $response = array("message"=> "TransactionId:".$_GET['TransactionId']."s");
-    echo json_encode($response);
+    $response = array("message"=> "TransactionId is not set");
+    // echo json_encode($response);
     exit();
 }
 ?>
@@ -109,7 +109,7 @@ else {
     <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-        <a href="Home.html" class="logo d-flex align-items-center">
+        <a href="Home_Professor.php" class="logo d-flex align-items-center">
             <img src="../assets/img/logo.png" alt="">
             <span style="font-size: 20px" class="d-none d-lg-block">CpE Communication</span>
         </a>
@@ -276,7 +276,7 @@ else {
             <li class="nav-item dropdown pe-3">
 
                 <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                    <img src="../assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+                    <i class="fs-3 bi bi-person-circle"></i>
                     <span class="d-none d-md-block dropdown-toggle ps-2"><?php echo $userName?></span>
                 </a><!-- End Profile Iamge Icon -->
 
@@ -320,7 +320,7 @@ else {
                     </li>
 
                     <li>
-                        <a class="dropdown-item d-flex align-items-center" href="#">
+                        <a class="dropdown-item d-flex align-items-center" href="#" id="logoutButton">
                             <i class="bi bi-box-arrow-right"></i>
                             <span>Sign Out</span>
                         </a>
@@ -464,5 +464,28 @@ else {
             $('#divDFormReceiptAlerts').hide('slow')
         },10000);
     </script> -->
+    <script>
+        $(function() {
+            $('#logoutButton').click(function() {
+                $.ajax({
+                    url: '.../logout.php',
+                    method: 'POST',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            // Optional: Redirect the user to another page after logout
+                            window.location.href = '../LoginPage.php';
+                        } else {
+                            // Handle errors
+                            console.error('Logout failed');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+        });
+    </script>
     </body>
 </html>

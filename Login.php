@@ -23,7 +23,8 @@ if (!$conn) {
  
     $IDNumber=$_POST['IDNumber'];
     $Password=$_POST['Password'];
-    $search= "SELECT * FROM Users_table WHERE IDNumber = '$IDNumber'";
+    $search= "SELECT u.*, rt.Code FROM Users_table u 
+    JOIN RegistrationType_table rt ON u.RegistrationTypeID = rt.RegistrationTypeID WHERE IDNumber = '$IDNumber'";
 
      //$params = array($IDNumber);
      $result = sqlsrv_query($conn, $search);
@@ -41,17 +42,16 @@ if (!$conn) {
                     $_SESSION['UserValid'] = true;
                     $_SESSION['UserID']=$row['UserID'];
                     $_SESSION['UserName']=$row['Name'];
+                    $_SESSION['IsAdmin']=$row['IsAdmin'];
+                    $_SESSION['RegType']=$row['Code'];
                     
                 if ($row['RegistrationTypeID'] == 2){
                     header('Location: Professor/Home_Professor.php');
                     exit();
                 } else if ($row['RegistrationTypeID'] == 1){
-                    header('Location: Home.html');
+                    header('Location: Home.php');
                     exit();
                 }
-                
-
-
 
 
              // Redirect to the appropriate page after successful login
