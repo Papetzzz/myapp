@@ -353,32 +353,26 @@ $IsAdmin = $_SESSION['IsAdmin'];
                                         </div>  
                                         <h5 class="card-title">Approved Consultation Requests</h5>
                                         <div class="overflow-auto">
-                                            <div class="row">
-                                                <div class="col-sm-6">
-                                                    <div class="row mb-3">
-                                                        <label class="col-sm-3 col-form-label">Order By:</label>
-                                                        <div class="col-sm-9">
-                                                            <select class="form-select" aria-label="Default select example" id="orderByApprovedSelect">
-                                                                <option value="Name">Name</option>
-                                                                <option value="Section">Section</option>
-                                                                <option value="Purpose">Purpose</option>
-                                                                <option value="Date">Requested Date</option>
-                                                                <option value="DateSubmitted" selected>Date Submitted</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-sm-6">
-                                                            <select class="form-select" aria-label="Default select example" id="orderApprovedSelect">
-                                                                <option value="ASC" >Ascending</option>
-                                                                <option value="DESC" selected>Descending</option>
-                                                            </select>
-                                                        </div>
+                                            <div class="row mb-3">
+                                                <label class="col-sm-3 col-form-label  mb-2">Order By:</label>
+                                                <div class="col-sm-9 row">
+                                                    <div class="col-sm-8">
+                                                        <select class="form-select mb-2" aria-label="Default select example" id="orderByApprovedSelect">
+                                                            <option value="Name">Name</option>
+                                                            <option value="Section">Section</option>
+                                                            <option value="Purpose">Purpose</option>
+                                                            <option value="Date">Requested Date</option>
+                                                            <option value="DateSubmitted" selected>Date Submitted</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <select class="form-select  mb-2" aria-label="Default select example" id="orderApprovedSelect">
+                                                            <option value="ASC" >Ascending</option>
+                                                            <option value="DESC" selected>Descending</option>
+                                                        </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-6">
-                                                    <div class="row mb-3">
-                                                        
-                                                    </div>
-                                                </div>
+                                                    
                                                 
                                             </div>
                                             <table class="table table-bordered border-primary">
@@ -431,29 +425,23 @@ $IsAdmin = $_SESSION['IsAdmin'];
                                         </div>  
                                         <h5 class="card-title">Other Consultation Requests</h5>
                                         <div class="overflow-auto">
-                                            <div class="row">
-                                                <div class="col-sm-6">
-                                                    <div class="row mb-3">
-                                                        <label class="col-sm-3 col-form-label">Order By:</label>
-                                                        <div class="col-sm-9">
-                                                            <select class="form-select" aria-label="Default select example" id="orderByCSelect">
-                                                                <option value="Name">Name</option>
-                                                                <option value="Section">Section</option>
-                                                                <option value="Purpose">Purpose</option>
-                                                                <option value="Date">Requested Date</option>
-                                                                <option value="DateSubmitted" selected>Date Submitted</option>
-                                                            </select>
-                                                        </div>
+                                            <div class="row mb-3">
+                                                <label class="col-sm-3 col-form-label mb-2">Order By:</label>
+                                                <div class="col-sm-9 row">
+                                                    <div class="col-sm-8">
+                                                        <select class="form-select  mb-2"  aria-label="Default select example" id="orderByCSelect">
+                                                            <option value="Name">Name</option>
+                                                            <option value="Section">Section</option>
+                                                            <option value="Purpose">Purpose</option>
+                                                            <option value="Date">Requested Date</option>
+                                                            <option value="DateSubmitted" selected>Date Submitted</option>
+                                                        </select>
                                                     </div>
-                                                </div>
-                                                <div class="col-sm-6">
-                                                    <div class="row mb-3">
-                                                        <div class="col-sm-6">
-                                                            <select class="form-select" aria-label="Default select example" id="orderCSelect">
-                                                                <option value="ASC" >Ascending</option>
-                                                                <option value="DESC" selected>Descending</option>
-                                                            </select>
-                                                        </div>
+                                                    <div class="col-sm-4">
+                                                        <select class="form-select mb-2" aria-label="Default select example" id="orderCSelect">
+                                                            <option value="ASC" >Ascending</option>
+                                                            <option value="DESC" selected>Descending</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 

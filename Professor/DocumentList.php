@@ -346,28 +346,22 @@
                                 <h5 class="card-title">Document List</h5>
 
                                 <div class="overflow-auto">
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <div class="row mb-3">
-                                                <label class="col-sm-3 col-form-label">Order By:</label>
-                                                <div class="col-sm-9">
-                                                    <select class="form-select" aria-label="Default select example" id="orderByDSelect">
-                                                        <option value="Name">Name</option>
-                                                        <option value="Section">Section</option>
-                                                        <option value="DocumentName">Document Name</option>
-                                                        <option value="Date" selected>Date</option>
-                                                    </select>
-                                                </div>
+                                    <div class="row mb-3">
+                                        <label class="col-sm-3 col-form-label">Order By:</label>
+                                        <div class="col-sm-9 row">
+                                            <div class="col-sm-8">
+                                                <select class="form-select  mb-2" aria-label="Default select example" id="orderByDSelect">
+                                                    <option value="Name">Name</option>
+                                                    <option value="Section">Section</option>
+                                                    <option value="DocumentName">Document Name</option>
+                                                    <option value="Date" selected>Date</option>
+                                                </select>
                                             </div>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <div class="row mb-3">
-                                                <div class="col-sm-6">
-                                                    <select class="form-select" aria-label="Default select example" id="orderDSelect">
-                                                        <option value="ASC" >Ascending</option>
-                                                        <option value="DESC" selected>Descending</option>
-                                                    </select>
-                                                </div>
+                                            <div class="col-sm-4">
+                                                <select class="form-select mb-2" aria-label="Default select example" id="orderDSelect">
+                                                    <option value="ASC" >Ascending</option>
+                                                    <option value="DESC" selected>Descending</option>
+                                                </select>
                                             </div>
                                         </div>
                                         
