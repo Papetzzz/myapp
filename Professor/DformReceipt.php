@@ -1,7 +1,7 @@
 <?php
+    session_start();
 // Ensure TransactionId parameter is provided
 if(isset($_GET['TransactionId'])) {
-    session_start();
     
     $transactionId = $_GET['TransactionId'];
 
@@ -123,12 +123,12 @@ else {
                     </a>
                 </li>--><!-- End Search Icon-->
 
-                <li class="nav-item dropdown">
+                <!-- <li class="nav-item dropdown">
 
                     <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
                         <i class="bi bi-bell"></i>
                         <span class="badge bg-primary badge-number">4</span>
-                    </a><!-- End Notification Icon -->
+                    </a><!-- End Notification Icon  
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
                         <li class="dropdown-header">
@@ -196,14 +196,14 @@ else {
 
                     </ul><!-- End Notification Dropdown Items -->
 
-                </li><!-- End Notification Nav -->
+                </li><!-- End Notification Nav  
 
                 <li class="nav-item dropdown">
 
                     <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
                         <i class="bi bi-chat-left-text"></i>
                         <span class="badge bg-success badge-number">3</span>
-                    </a><!-- End Messages Icon -->
+                    </a><!-- End Messages Icon 
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
                         <li class="dropdown-header">
@@ -260,9 +260,9 @@ else {
                             <a href="#">Show all messages</a>
                         </li>
 
-                    </ul><!-- End Messages Dropdown Items -->
+                    </ul><!-- End Messages Dropdown Items 
 
-                </li><!-- End Messages Nav -->
+                </li>End Messages Nav -->
 
                 <li class="nav-item dropdown pe-3">
 
@@ -276,32 +276,14 @@ else {
                             <h6><?php echo $userName?></h6>
                             <!-- <span>Web Designer</span> -->
                         </li>
+                        
+                        
                         <li>
                             <hr class="dropdown-divider">
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                                <i class="bi bi-person"></i>
-                                <span>My Profile</span>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                                <i class="bi bi-gear"></i>
-                                <span>Account Settings</span>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
+                            <a class="dropdown-item d-flex align-items-center" href="mailto:delarocamarckjoseph16@gmail.com">
                                 <i class="bi bi-question-circle"></i>
                                 <span>Need Help?</span>
                             </a>
@@ -354,10 +336,22 @@ else {
                     
                 </ul>
             </li><!-- End Forms Nav -->
-
-         
-
-        </ul>
+            <li class="nav-item" id="adminItem" style="display: none">
+                <a class="nav-link collapsed" data-bs-target="#admin-nav" data-bs-toggle="collapse" >
+                    <i class="bi bi-shield-lock"></i><span>Admin Page</span><i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="admin-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="../Admin/Home_Admin.php">
+                            <i class="bi bi-circle"></i><span>All Users</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../Admin/AllRequests.php">
+                            <i class="bi bi-circle"></i><span>All Documents</span>
+                        </a>
+                    </li>
+                        </ul>
 
     </aside><!-- End Sidebar-->
 
@@ -439,27 +433,36 @@ else {
         // },10000);
     </script>
     <script>
-    $(function() {
-        $('#logoutButton').click(function() {
-            $.ajax({
-                url: '../logout.php',
-                method: 'POST',
-                dataType: 'json',
-                success: function(response) {
-                    if (response.success) {
-                        // Optional: Redirect the user to another page after logout
-                        window.location.href = '../LoginPage.php';
-                    } else {
-                        // Handle errors
-                        console.error('Logout failed');
+        $(function() {
+            $('#logoutButton').click(function() {
+                $.ajax({
+                    url: '../logout.php',
+                    method: 'POST',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            // Optional: Redirect the user to another page after logout
+                            window.location.href = '../LoginPage.php';
+                        } else {
+                            // Handle errors
+                            console.error('Logout failed');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
                     }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error:', error);
-                }
+                });
             });
         });
-    });
-</script>
+    </script>
+    <?php
+        if ($IsAdmin == 1){
+            echo '<script>';
+            echo '$(function() {';
+            echo '$("#adminItem").show();';
+            echo '});';
+            echo '</script>';
+        }
+    ?>
     </body>
 </html>

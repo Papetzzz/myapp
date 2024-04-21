@@ -48,6 +48,7 @@ function count() {
         method: 'GET',
         dataType: 'json',
         success: function(response) {
+            console.log('count() response: ',response)
             // Update the counts in the UI
             $('#h6CountConsult').text(response.countconsult);
             $('#h6CountSub').text(response.countsubmit);

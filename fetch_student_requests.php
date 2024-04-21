@@ -15,7 +15,6 @@ try {
         die(print_r(sqlsrv_errors(), true));
     }
     $startDate = date('Y-m-d 00:00:00', strtotime('-100 days'));
-    $endDate = date('Y-m-d 23:59:59');
     
     // echo $startDate." ".$endDate." ".$TransactionCode;
     // Modify your SQL query to order the results based on the selected criteria and direction
@@ -27,21 +26,24 @@ try {
                 a.TransactionDate as RequestDate,
                 a.RequestedDate AS RequestDateTime,
                 a.TransactionDate as DateSubmitted,
+                tm.Code,
                 CASE
                     WHEN a.DateAccepted IS NOT NULL THEN 'Yes'
                     ELSE 'No'
                 END as IsReceived,
-                a.Remarks
+                a.Remarks,
+                dt.Type
                 FROM Transactions_table a
                 join Users_table u on a.ProfessorID = u.UserID	
                 join TransactionMode_table tm on a.TransactionModeID = tm.TransactionModeID
                 join Section_table s on a.SectionID = s.SectionID
                 join Status_Table st on a.StatusID = st.StatusID
-                where tm.Code = '".$TransactionCode."'
-                    AND a.UserID = ".$_SESSION['UserID']."
-                    AND a.TransactionDate BETWEEN '".$startDate."' AND '".$endDate."'
+                JOIN DocumentType_Table dt on a.DocumentTypeId = dt.DocumentTypeId
+                where  a.UserID = ".$_SESSION['UserID']."
+                    AND a.TransactionDate BETWEEN '".$startDate."' AND getdate()
                     ORDER BY a.TransactionDate DESC"; // Dynamically order the results based on $orderBy and $direction
-
+                    // tm.Code = '".$TransactionCode."'
+                    // AND
     // Execute the SQL query
     $result = sqlsrv_query($conn, $search);
 

@@ -24,7 +24,7 @@ function countSubmission($conn) {
     $row_count = 0;
 
     // Fetch results and count rows
-    while (sqlsrv_fetch($stmt) !== false) {
+    while ($row = sqlsrv_fetch($stmt)) { 
         $row_count++;
     }
     $sub_count = $row_count;
@@ -51,7 +51,7 @@ function countConsultation($conn) {
     
 
     // Fetch results and count rows
-    while (sqlsrv_fetch($stmt) !== false) {
+    while ($row = sqlsrv_fetch($stmt)) {
         
         $row_count++;
     }

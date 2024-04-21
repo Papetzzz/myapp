@@ -1,11 +1,8 @@
 <?php
-
 session_start();
-$IsAdmin = $_SESSION['IsAdmin'];
 // Ensure TransactionId parameter is provided
-if(!is_null($_GET['TransactionId'])) {
-    
-    
+if(isset($_GET['TransactionId'])) {
+    $userName = $_SESSION['UserName'];
     $transactionId = $_GET['TransactionId'];
 
     // Fetch transaction details from the database based on the provided TransactionId
@@ -19,19 +16,8 @@ if(!is_null($_GET['TransactionId'])) {
         die(print_r(sqlsrv_errors(), true));
     }
 
-    $query = "  SELECT
-    u_n.Name as Name,
-    s.Year,
-    s.Description as Sect_desc,
-	t.Purpose,
-	u_p.Name as Prof_Name,
-    t.RequestedDate as Date
-    
-    from Transactions_table t
-    join Users_table u_n on t.UserID = u_n.UserID
-    join Section_table s on s.SectionID = t.SectionID
-	join Users_table u_p on t.ProfessorID = u_p.UserID
-    where TransactionID = ?";
+    $query = "  SELECT * from Transactions_table t
+    join Users_table u on t.UserID = u.UserID WHERE TransactionID = ?";
     $params = array($transactionId);
     $result = sqlsrv_query($conn, $query, $params);
 
@@ -42,21 +28,13 @@ if(!is_null($_GET['TransactionId'])) {
 
     // Fetch transaction details
     $transaction = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC);
-    $userName = $transaction['Name'];
-    $Year = $transaction["Year"];
-    $Section_Desc = $transaction["Sect_desc"];
-    $Purpose = $transaction["Purpose"];
-    $Prof_Name = $transaction["Prof_Name"];
-    // Get Date and Time separately from RequestedDate
-    $requestedDateTime = $transaction["Date"]; // Assuming 'Date' is the key for 'RequestedDate'
-    $requestedDate = date_format($requestedDateTime, 'M d, Y'); // Get date in 'Y-m-d' format
-    $requestedTime = date_format($requestedDateTime, 'h:i A'); // Get time in 'H:i:s' format
+
     // Close the database connection
     sqlsrv_close($conn);
 }
 else {
-    $response = array("message"=> "TransactionId:".$_GET['TransactionId']);
-    echo json_encode($response);
+    // Redirect or display an error message if TransactionId parameter is not provided
+    header("Location: error.php");
     exit();
 }
 ?>
@@ -127,12 +105,12 @@ else {
                     </a>
                 </li>--><!-- End Search Icon-->
 
-                <!-- <li class="nav-item dropdown">
+                <li class="nav-item dropdown">
 
                     <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
                         <i class="bi bi-bell"></i>
                         <span class="badge bg-primary badge-number">4</span>
-                    </a><!-- End Notification Icon
+                    </a><!-- End Notification Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
                         <li class="dropdown-header">
@@ -200,14 +178,14 @@ else {
 
                     </ul><!-- End Notification Dropdown Items -->
 
-                </li><!-- End Notification Nav
+                </li><!-- End Notification Nav -->
 
                 <li class="nav-item dropdown">
 
                     <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
                         <i class="bi bi-chat-left-text"></i>
                         <span class="badge bg-success badge-number">3</span>
-                    </a><!-- End Messages Icon
+                    </a><!-- End Messages Icon -->
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
                         <li class="dropdown-header">
@@ -264,9 +242,9 @@ else {
                             <a href="#">Show all messages</a>
                         </li>
 
-                    </ul><!-- End Messages Dropdown Items
+                    </ul><!-- End Messages Dropdown Items -->
 
-                </li>End Messages Nav -->
+                </li><!-- End Messages Nav -->
 
                 <li class="nav-item dropdown pe-3">
 
@@ -340,7 +318,6 @@ else {
                     
                 </ul>
             </li><!-- End Forms Nav -->
-
             <li class="nav-item" id="adminItem" style="display: none">
                 <a class="nav-link collapsed" data-bs-target="#admin-nav" data-bs-toggle="collapse" >
                     <i class="bi bi-shield-lock"></i><span>Admin Page</span><i class="bi bi-chevron-down ms-auto"></i>
@@ -359,6 +336,7 @@ else {
                     
                 </ul>
             </li>
+         
 
         </ul>
 
@@ -372,56 +350,211 @@ else {
                         <div class="col-md-6">
                             <div class="card">
                                 <div class="card-body">
-                                    <h1 class="card-title text-center">Consultation Submission Receipt</h1>
-                                    <div id="divDFormReceiptAlerts">
-                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        <i class="bi bi-check-circle me-1"></i>Succesfully submitted document!
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </div>
-                                    </div><!--action="DFormButton.php" method="post" --> 
+                                    <h1 class="card-title text-center">Document Submission Receipt</h1>
+                                    <div id="divDFormReceiptAlerts">Successfull Submitted Document</div><!--action="DFormButton.php" method="post" --> 
                                 
                                         <div class="mb-3">
-                                            <label for="name" class="form-label"><b>Name: </b><?php echo $userName?></label>
+                                            <label for="name" class="form-label"><b>Name:</b><?php echo $userName?></label>
                                             
                                         </div>
 
                                         <div class="row mb-3">
-                                            <div class= "col-sm-6">
-                                                <label for="yearSelect" class="form-label">
-                                                    <b>Year Level: </b>
-                                                    <?php echo $Year ?>
-                                                </label>                                                
+                                            <div class= "col-sm-4">
+                                                <label for="yearSelect" class="form-label">Year Level:</label>
+                                                <select class="form-select" aria-label="Default select example" id="yearSelect"name="yearSelect">
+                                                    <option selected="">Select year</option>
+                                                    <?php
+                                                    $serverName = "DESKTOP-94I5S6B\\SQLEXPRESS"; // serverName\instanceName
+                                                    $connectionInfo = array("Database" => "CpE_Transactions");
+                                                    $conn = sqlsrv_connect($serverName, $connectionInfo);
+
+                                                    if ($conn === false) {
+                                                        // Handle connection failure
+                                                        die(print_r(sqlsrv_errors(), true));
+                                                    }
+
+                                                    $search = "SELECT DISTINCT Year FROM Section_table;";
+                                                    $result = sqlsrv_query($conn, $search);
+
+                                                    if ($result === false) {
+                                                        // Handle query execution error
+                                                        die(print_r(sqlsrv_errors(), true));
+                                                    }
+
+                                                    while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                                                        echo "<option value='" . $row['Year'] . "'>" . $row['Year'] . "</option>";
+                                                    }
+                                                    sqlsrv_free_stmt($result);
+                                                    ?>
+                                                </select>
                                             </div>
-                                            <div class="col-sm-6">
-                                                <label for="name" class="form-label"><b>Section: </b><?php echo $Section_Desc?></label>                                            
+                                            <div class="col-sm-8">
+                                                <label for="name" class="form-label">Section:</label>
+                                                <select class="form-select" aria-label="Default select example" id="sectionSelect" name="sectionSelect">
+                                                    <option selected="">Select section</option>
+                                                </select>
                                             </div>
+                                            <script>
+                                                document.getElementById('yearSelect').addEventListener('change', function() {
+                                                    var year = this.value;
+                                                    fetchSections(year);
+                                                });
+
+                                                function fetchSections(year) {
+                                                    // AJAX call to fetch sections based on the selected year
+                                                    var xhr = new XMLHttpRequest();
+                                                    xhr.onreadystatechange = function() {
+                                                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                                                            if (xhr.status === 200) {
+                                                                // Success
+                                                                var sections = JSON.parse(xhr.responseText);
+                                                                console.log(sections)
+                                                                populateSections(sections);
+                                                            } else {
+                                                                // Error
+                                                                console.error('Failed to fetch sections');
+                                                            }
+                                                        }
+                                                    };
+                                                    xhr.open('GET', 'fetch_sections.php?year=' + year, true);
+                                                    xhr.send();
+                                                }
+
+                                                function populateSections(sections) {
+                                                    var sectionSelect = document.getElementById('sectionSelect');
+                                                    sectionSelect.innerHTML = '<option selected="" value=0>Select section</option>';
+                                                    sections.forEach(function(section) {
+                                                        var option = document.createElement('option');
+                                                        option.value = section.sectionID; // Set the value to sectionID
+                                                        option.textContent = section.sectionCode; // Display sectionCode and section
+                                                        sectionSelect.appendChild(option);
+                                                    });
+                                                }
+                                            </script>
+                                            <?php
+                                                $serverName = "DESKTOP-94I5S6B\\SQLEXPRESS"; //serverName\instanceName
+                                                $connectionInfo = array("Database" => "CpE_Transactions");
+                                                $conn = sqlsrv_connect($serverName, $connectionInfo);
+
+                                                if ($conn === false) {
+                                                    // Handle connection failure
+                                                    die(print_r(sqlsrv_errors(), true));
+                                                }
+                                                if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["year"])) {
+                                                    // Retrieve selected year from the form
+                                                    $selectedYear = $_POST["yearSelect"];
+                                                    
+                                                    // Call your PHP function here with the selected year
+                                                    getSection($selectedYear);
+                                                }
+                                                function getSection($year){
+                                                    
+                                                    // Prepare the SQL statement with parameterized query
+                                                    $search = "SELECT SectionID, SectionCode FROM Section_table WHERE Year = ?";
+                                                    $params = array($year);
+                                                    $result = sqlsrv_query($conn, $search, $params);
+
+                                                    if ($result === false) {
+                                                        // Handle query execution error
+                                                        die(print_r(sqlsrv_errors(), true));
+                                                    }
+                                                    while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                                                        echo "<option value=".$row['SectionID'].">".$row['SectionCode']."</option>";
+                                                    }
+                                                    sqlsrv_free_stmt($result);
+                                                }
+
+                                                // Close the database connection
+                                                sqlsrv_close($conn);
+                                            ?>
+
                                         </div>
 
                                         <div class="mb-3">
-                                            <div class="col-sm-12">
-                                                <label for="section" class="form-label"><b>Requested Date: </b> <?php echo $requestedDate?></label>
-                                            </div>
-                                        </div>
+                                            <label for="section" class="form-label">Document Type:</label>
+                                            <select class="form-select" aria-label="Default select example" id="documentType" name="documentType">
+                                                <option selected="">Select Document Type</option>
+                                                <?php
+                                                    $serverName = "DESKTOP-94I5S6B\\SQLEXPRESS"; // serverName\instanceName
+                                                    $connectionInfo = array("Database" => "CpE_Transactions");
+                                                    $conn = sqlsrv_connect($serverName, $connectionInfo);
 
-                                        <div class="mb-3">
-                                            <div class="col-sm-12">
-                                                <label for="section" class="form-label"><b>Requested Time: </b> <?php echo $requestedTime?></label>
-                                            </div>
-                                        </div>
+                                                    if ($conn === false) {
+                                                        // Handle connection failure
+                                                        die(print_r(sqlsrv_errors(), true));
+                                                    }
 
-                                        <div class="mb-3">
-                                            <label for="purpose" class="form-label"><b>Purpose of Submission: </b></label>
-                                            <div class="card-text">
-                                                <?php echo $Purpose?>
+                                                    $search = "SELECT DocumentTypeId,Type FROM DocumentType_Table";
+                                                    $result = sqlsrv_query($conn, $search);
+
+                                                    if ($result === false) {
+                                                        // Handle query execution error
+                                                        die(print_r(sqlsrv_errors(), true));
+                                                    }
+
+                                                    while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                                                        echo "<option value='" . $row['DocumentTypeId'] . "'>" . $row['Type'] . "</option>";
+                                                    }
+                                                    sqlsrv_free_stmt($result);
+                                                ?>
+                                                
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                        Please Fill your Document Type.
                                                 </div>
+
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="purpose" class="form-label">Purpose of Submission:</label>
+                                            <textarea class="form-control" id="purpose" name="purpose" rows="4"></textarea>
                                         </div>
                                         <div class="mb-3">
-                                            <label for="pro" class="form-label"><b>Professor's Name: </b> Ma'am / Sir <?php echo $Prof_Name?></label>
+                                            <label for="pro" class="form-label">Professor's Name:</label>
+                                            <?php
+                                                try {
+                                                    $serverName = "DESKTOP-94I5S6B\\SQLEXPRESS"; //serverName\instanceName
+                                                    $connectionInfo = array("Database" => "CpE_Transactions");
+                                                    $conn = sqlsrv_connect($serverName, $connectionInfo);
+                                                    
+                                                    if ($conn === false) {
+                                                        // Handle connection failure
+                                                        die(print_r(sqlsrv_errors(), true));
+                                                    }
+
+                                                    // Perform SQL query
+                                                    $search = "SELECT * FROM Users_table WHERE RegistrationTypeID = 2";
+                                                    $result = sqlsrv_query($conn, $search);
+
+                                                    if ($result === false) {
+                                                        // Handle query execution error
+                                                        die(print_r(sqlsrv_errors(), true));
+                                                    }
+
+                                                    // Start select box
+                                                    echo '<select class="form-select mb-3" aria-label="Default select example" name="professorId" id="professorId">';
+                                                    
+                                                    // Fetch and display results
+                                                    while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                                                        // Output option for each row
+                                                        echo '<option value="' . $row['UserID'] . '">' . $row['Name'] . '</option>';
+                                                    }
+                                                    
+                                                    // Close select box
+                                                    echo '</select>';
+
+                                                    // Free result memory
+                                                    sqlsrv_free_stmt($result);
+
+                                                } catch (Exception $e) {
+                                                    // Handle other types of exceptions
+                                                    die("Some problem getting data from database: " . $e->getMessage());
+                                                }
+
+                                                // Close the PHP tag
+                                                ?>
                                         </div>
-                                        <div class="text-end">
-                                            <button type="button" class="btn btn-primary" onclick="window.location.href='Home.php'">Go To Dashboard</button>
-                                        </div>
-                                        
+                                        <button  class="btn btn-primary w-100" id="dFormSubmitBtn">Submit</button><!--type="submit"-->
                                 </div>
                             </div>
                         </div>
@@ -446,11 +579,6 @@ else {
 
     <!-- Template Main JS File -->
     <script src="assets/js/main.js"></script>
-    <script>
-        setTimeout(function(){
-            $('#divDFormReceiptAlerts').hide('slow')
-        },10000);
-    </script>
     <?php
         if ($IsAdmin == 1){
             echo '<script>';
@@ -460,28 +588,6 @@ else {
             echo '</script>';
         }
     ?>
-    <script>
-        $(function() {
-            $('#logoutButton').click(function() {
-                $.ajax({
-                    url: 'logout.php',
-                    method: 'POST',
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            // Optional: Redirect the user to another page after logout
-                            window.location.href = 'LoginPage.php';
-                        } else {
-                            // Handle errors
-                            console.error('Logout failed');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error:', error);
-                    }
-                });
-            });
-        });
-    </script>
+
     </body>
 </html>

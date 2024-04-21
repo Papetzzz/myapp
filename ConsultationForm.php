@@ -70,12 +70,12 @@
                     </a>
                 </li>--><!-- End Search Icon-->
 
-                <li class="nav-item dropdown">
+                <!-- <li class="nav-item dropdown">
 
                     <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
                         <i class="bi bi-bell"></i>
                         <span class="badge bg-primary badge-number">4</span>
-                    </a><!-- End Notification Icon -->
+                    </a>
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
                         <li class="dropdown-header">
@@ -141,16 +141,16 @@
                             <a href="#">Show all notifications</a>
                         </li>
 
-                    </ul><!-- End Notification Dropdown Items -->
+                    </ul><!-- End Notification Dropdown Items
 
-                </li><!-- End Notification Nav -->
+                </li><!-- End Notification Nav
 
                 <li class="nav-item dropdown">
 
                     <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
                         <i class="bi bi-chat-left-text"></i>
                         <span class="badge bg-success badge-number">3</span>
-                    </a><!-- End Messages Icon -->
+                    </a><!-- End Messages Icon
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
                         <li class="dropdown-header">
@@ -207,9 +207,9 @@
                             <a href="#">Show all messages</a>
                         </li>
 
-                    </ul><!-- End Messages Dropdown Items -->
+                    </ul><!-- End Messages Dropdown Items
 
-                </li><!-- End Messages Nav -->
+                </li>End Messages Nav -->
 
                 <li class="nav-item dropdown pe-3">
 
@@ -223,32 +223,14 @@
                             <h6><?php echo $userName?></h6>
                             <!-- <span>Web Designer</span> -->
                         </li>
+                        
+                        
                         <li>
                             <hr class="dropdown-divider">
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                                <i class="bi bi-person"></i>
-                                <span>My Profile</span>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                                <i class="bi bi-gear"></i>
-                                <span>Account Settings</span>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
+                            <a class="dropdown-item d-flex align-items-center" href="mailto:delarocamarckjoseph16@gmail.com">
                                 <i class="bi bi-question-circle"></i>
                                 <span>Need Help?</span>
                             </a>
@@ -303,9 +285,22 @@
             </li><!-- End Forms Nav -->
 
             <li class="nav-item" id="adminItem" style="display: none">
-                <a class="nav-link collapsed" href="Admin/Home_Admin.php">
-                    <i class="bi bi-shield-lock"></i><span>Admin Page</span>
+                <a class="nav-link collapsed" data-bs-target="#admin-nav" data-bs-toggle="collapse" >
+                    <i class="bi bi-shield-lock"></i><span>Admin Page</span><i class="bi bi-chevron-down ms-auto"></i>
                 </a>
+                <ul id="admin-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="Admin/Home_Admin.php">
+                            <i class="bi bi-circle"></i><span>All Users</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="Admin/AllRequests.php">
+                            <i class="bi bi-circle"></i><span>All Requests</span>
+                        </a>
+                    </li>
+                    
+                </ul>
             </li>
 
         </ul>

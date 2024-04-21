@@ -25,10 +25,9 @@ function countConsultation($conn) {
 
     // Initialize row count
     $row_count = 0;
-    
 
     // Fetch results and count rows
-    while (sqlsrv_fetch($stmt) !== false) {
+    while ($row = sqlsrv_fetch($stmt)) {
         
         $row_count++;
     }
@@ -53,7 +52,7 @@ function countSubmission($conn) {
     $row_count = 0;
 
     // Fetch results and count rows
-    while (sqlsrv_fetch($stmt) !== false) {
+    while ($row = sqlsrv_fetch($stmt)) {
         $row_count++;
     }
     echo $row_count;
@@ -132,19 +131,19 @@ function countSubmission($conn) {
         <nav class="header-nav ms-auto">
             <ul class="d-flex align-items-center">
 
-                <!-- <!--<li class="nav-item d-block d-lg-none">
+                <!-- <li class="nav-item d-block d-lg-none">
                     <a class="nav-link nav-icon search-bar-toggle " href="#">
                         <i class="bi bi-search"></i>
                     </a>
-                </li>--> -->
+                </li>--> 
                 <!-- End Search Icon-->
 
-                <li class="nav-item dropdown">
+                <!-- <li class="nav-item dropdown">
 
                     <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
                         <i class="bi bi-bell"></i>
                         <span class="badge bg-primary badge-number">4</span>
-                    </a><!-- End Notification Icon -->
+                    </a><!-- End Notification Icon
 
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
                         <li class="dropdown-header">
@@ -170,9 +169,9 @@ function countSubmission($conn) {
                             <a href="#">Show all notifications</a>
                         </li>
 
-                    </ul><!-- End Notification Dropdown Items -->
+                    </ul><!-- End Notification Dropdown Items 
 
-                </li><!-- End Notification Nav -->
+                </li>End Notification Nav -->
 
                 <!-- <li class="nav-item dropdown">
 
@@ -227,32 +226,14 @@ function countSubmission($conn) {
                             <h6><?php echo $_SESSION['UserName']; ?></h6>
                             <span>Student</span>
                         </li>
+                        
+                        
                         <li>
                             <hr class="dropdown-divider">
                         </li>
 
                         <li>
-                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                                <i class="bi bi-person"></i>
-                                <span>My Profile</span>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                                <i class="bi bi-gear"></i>
-                                <span>Account Settings</span>
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
+                            <a class="dropdown-item d-flex align-items-center" href="mailto:delarocamarckjoseph16@gmail.com">
                                 <i class="bi bi-question-circle"></i>
                                 <span>Need Help?</span>
                             </a>
@@ -292,6 +273,7 @@ function countSubmission($conn) {
                     <i class="bi bi-journal-text"></i><span>Forms</span><i class="bi bi-chevron-down ms-auto"></i>
                 </a>
                 <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                      
                     <li>
                         <a href="DocumentForm.php">
                             <i class="bi bi-circle"></i><span> Document Submission Form</span>
@@ -308,9 +290,22 @@ function countSubmission($conn) {
             
                     
             <li class="nav-item" id="adminItem" style="display: none">
-                <a class="nav-link collapsed" href="Admin/Home_Admin.php">
-                    <i class="bi bi-shield-lock"></i><span>Admin Page</span>
+                <a class="nav-link collapsed" data-bs-target="#admin-nav" data-bs-toggle="collapse" >
+                    <i class="bi bi-shield-lock"></i><span>Admin Page</span><i class="bi bi-chevron-down ms-auto"></i>
                 </a>
+                <ul id="admin-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="Admin/Home_Admin.php">
+                            <i class="bi bi-circle"></i><span>All Users</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="Admin/AllRequests.php">
+                            <i class="bi bi-circle"></i><span>All Requests</span>
+                        </a>
+                    </li>
+                    
+                </ul>
             </li>
         </ul>
 
@@ -444,6 +439,10 @@ function countSubmission($conn) {
                     <td>RequestPurpose</td>
                 </tr>
                 <tr class="table_color">
+                    <th>Document Type: </th>
+                    <td>RequestDocType</td>
+                </tr>
+                <tr class="table_color">
                     <th>Date Submitted: </th>
                     <td>RequestDate</td>
                 </tr>
@@ -506,6 +505,7 @@ function countSubmission($conn) {
     
     <script>
         $(function() {
+            fetchRequests('C')
             $('#logoutButton').click(function() {
                 $.ajax({
                     url: 'logout.php',
@@ -526,8 +526,10 @@ function countSubmission($conn) {
                 });
             });
         });
-
+        
+        // fetchRequests('S')
         function fetchRequests(Mode){
+            console.log('fetchRequests start: ',Mode)
             $('#documentRequests').empty()
             $('#consultationRequests').empty()
             $.ajax({
@@ -538,12 +540,14 @@ function countSubmission($conn) {
                 },
                 dataType: 'json',
                 success: function(response) {
-                    console.log('response: ',response)
-                    console.log('Mode: ',Mode)
+                    console.log('fetchRequests success: ',Mode)
+
                     var countS = 0
                     var countC = 0
                     $(response).each(function(i,field){
-                        if (Mode = 'S'){
+                        console.log('field.Code: ',field.Code)
+                        if (field.Code == 'S'){
+                            console.log('field: ',field)
                             countS++
                             var s = $('#documentRequestsTemplate').html()
                             s = s.replace("Name_Professor",field.Name)
@@ -552,14 +556,16 @@ function countSubmission($conn) {
                             var formattedSubmittedDate = new Date(submittedDateTime.replace(/-/g, '/')).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false});
                             s = s.replace("RequestDate",formattedSubmittedDate)
                             s = s.replace("RequestIsReceived",field.IsReceived)
+                            s = s.replace("RequestDocType",field.Type)
                             if (countS%2 == 0){
                                 s = s.replace(/table_color/g,'table-active')
-                            }
-
+                            } 
+                            
                             $('#documentRequests').append(s)
-
+                            console.log('added to documents')
                         }
-                        if (Mode = 'C'){
+                        else if (field.Code == 'C'){
+                            console.log('response: ',field)
                             countC++;
                             var c = $('#consultationRequestsTemplate').html()
                             c = c.replace("Name_Professor",field.Name)
@@ -575,9 +581,11 @@ function countSubmission($conn) {
                             
                             if (countC%2 == 1){
                                 c = c.replace(/table_color/g,'table-active')
-                            }
+                            } 
 
                             $('#consultationRequests').append(c)
+                            console.log('added to consult')
+
                         }
                     })
                     
@@ -588,10 +596,6 @@ function countSubmission($conn) {
                 }
             });
         }
-        console.log('fetchRequests (S)')
-        fetchRequests('S')
-        console.log('fetchRequests (C)')
-        fetchRequests('C')
     </script>
     <?php
     if ($IsAdmin == 1){

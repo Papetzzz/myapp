@@ -7,21 +7,17 @@
 
     // Define the date ranges based on the selected filter
     switch ($dateFilter) {
-        case 'a': // Today
-            $startDate = date('Y-m-d');
-            $endDate = date('Y-m-d');
+        case 'a': // Today,,
+            $startDate = date('Y-m-d 00:00:00');
             break;
         case 'b': // From 7 days ago to today
-            $startDate = date('Y-m-d', strtotime('-7 days'));
-            $endDate = date('Y-m-d');
+            $startDate = date('Y-m-d 00:00:00', strtotime('-7 days'));
             break;
         case 'c': // From 31 days ago to today
-            $startDate = date('Y-m-d', strtotime('-31 days'));
-            $endDate = date('Y-m-d');
+            $startDate = date('Y-m-d 00:00:00', strtotime('-31 days'));
             break;
         default: // Default to 365 days ago to today
-            $startDate = date('Y-m-d', strtotime('-365 days'));
-            $endDate = date('Y-m-d');
+            $startDate = date('Y-m-d 00:00:00', strtotime('-365 days'));
             break;
     }
     try {
@@ -47,8 +43,8 @@
                     JOIN DocumentType_Table d ON a.DocumentTypeId = d.DocumentTypeId 
                     WHERE TransactionModeID = 2 
                         AND a.ProfessorID = ".$_SESSION['UserID']." AND
-                        a.TransactionDate BETWEEN '$startDate' AND '$endDate'
-                    ORDER BY $orderBy $direction;"; // Dynamically order the results based on $orderBy and $direction
+                        a.TransactionDate BETWEEN '".$startDate."' AND getDate()
+                    ORDER BY ".$orderBy." ".$direction.";"; // Dynamically order the results based on $orderBy and $direction
 
         // Execute the SQL query and fetch the results as before
         $result = sqlsrv_query($conn, $search);

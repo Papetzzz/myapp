@@ -16,7 +16,7 @@ if(isset($_GET['year'])) {
         die(print_r(sqlsrv_errors(), true));
     }
 
-    $search = "SELECT SectionID, SectionCode FROM Section_table WHERE Year = ?";
+    $search = "SELECT SectionID, SectionCode FROM Section_table WHERE Year = ? ORDER BY SectionCode";
     $params = array($year);
     $result = sqlsrv_query($conn, $search, $params);
 

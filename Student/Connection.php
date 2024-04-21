@@ -18,7 +18,7 @@ $trimmedIDNumber = trim($IDNumber);
 $trimmedPassword = trim($Password);
 if (!empty($trimmedName) && !empty($trimmedIDNumber) && !empty($trimmedPassword)) {
      
-     $insert= "Insert into Users_table(Name,IDNumber,Password,RegistrationTypeID,IsAdmin)values('$Name','$IDNumber','$Password',$RegType,$Admin)";
+     $insert= "Insert into Users_table(Name,IDNumber,Password,RegistrationTypeID,IsAdmin,IsActive)values('$Name','$IDNumber','$Password',$RegType,$Admin,1)";
      $result=sqlsrv_prepare($conn,$insert);
 
      if( sqlsrv_execute($result)) {
