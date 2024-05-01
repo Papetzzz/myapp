@@ -61,6 +61,7 @@ try {
     $search = "SELECT
                 a.TransactionID,
                 u.Name,
+                us.Name as Student,
                 a.Purpose as Purpose,
                 st.Description as Status,
                 a.RequestedDate AS RequestDateTime,
@@ -74,6 +75,7 @@ try {
                 dt.Type
             FROM Transactions_table a
             LEFT JOIN Users_table u ON a.ProfessorID = u.UserID	
+            LEFT JOIN Users_table us ON a.UserID = us.UserID	
             LEFT JOIN TransactionMode_table tm ON a.TransactionModeID = tm.TransactionModeID
             LEFT JOIN Section_table s ON a.SectionID = s.SectionID
             LEFT JOIN Status_Table st ON a.StatusID = st.StatusID
@@ -107,6 +109,7 @@ try {
  
     if ($isDocument !== 'true' && $isApproved !== null) {
         $whereClause .= " AND (st.Code = " . ($isApproved === 'true' ? "'A'" : "'N' or st.Code = 'R'").")";
+        // $whereClause .= ($isApproved === 'true' ? " AND (st.Code = 'A')" : " ");
     }
 
     if ($startDate !== null && $endDate !== null) {

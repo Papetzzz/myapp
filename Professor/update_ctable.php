@@ -4,7 +4,7 @@
     $orderBy = isset($_GET['orderBy']) ? $_GET['orderBy'] : 'Date';
     $direction = isset($_GET['direction']) ? $_GET['direction'] : 'DESC';
     $dateFilter = isset($_GET['dateFilter']) ? $_GET['dateFilter'] : null;
-    $statusCode = isset($_GET['statusCode']) ? $_GET['statusCode'] : 'N';
+    $statusCode = isset($_GET['statusCode']) ? $_GET['statusCode'] : null;
     // Define the date ranges based on the selected filter
     switch ($dateFilter) {
         case 'a': // Today,,
@@ -40,6 +40,7 @@
             a.RequestedDate as Date,
             a.TransactionDate as DateSubmitted,
             a.DateAccepted as DateApproved,
+            st.Description as Status,
             Remarks
             FROM Transactions_table a
             JOIN Users_table u ON a.UserID = u.UserID
@@ -47,11 +48,12 @@
             JOIN Status_Table st ON a.StatusID = st.StatusID
             WHERE TransactionModeID = 1
                 AND a.ProfessorID = ".$_SESSION['UserID']." 
-                AND st.Code = '".$statusCode."' 
+                ".($statusCode ? "AND st.Code = '".$statusCode."'" : "AND st.Code !='A'")." 
                 AND a.TransactionDate BETWEEN '".$startDate."' AND getdate()
             ORDER BY ".$orderBy." ".$direction.";"; 
             // Dynamically order the results based on $orderBy and $direction
         echo $search;
+
         // Execute the SQL query and fetch the results as before
         $result = sqlsrv_query($conn, $search);
 
@@ -81,21 +83,21 @@
             if ($counter%2 == 0){
                 $table_color='table-active';
             }
-            echo  '<tr onclick="goToCReceipt('.$row['TransactionID'].')" style="border-top-width: thick" class='.$table_color.'>';
-            echo  '<th rowspan="7" scope="row">'.$counter.'</th>';
+            echo  '<tr onclick="goToCReceipt('.$row['TransactionID'].')" style="border-top-width: thick" class="'.$table_color.' tr-'.$row['Status'].'">';
+            echo  '<th rowspan="6" scope="row">'.$counter.'</th>';
             echo  '<th scope="row">Name</th>';
             echo  '<td>'.$row['Name'].'</td>';
             echo  '</tr>';
-            echo  '<tr onclick="goToCReceipt('.$row['TransactionID'].') "class='.$table_color.'>';
+            echo  '<tr onclick="goToCReceipt('.$row['TransactionID'].') "class="'.$table_color.' tr-'.$row['Status'].'">';
             echo  '<th scope="row">Section</th>';
             echo  '<td>'.$row['Section'].'</td>';
             echo  '</tr>';
-            echo  '<tr onclick="goToCReceipt('.$row['TransactionID'].') "class='.$table_color.'>';
+            echo  '<tr onclick="goToCReceipt('.$row['TransactionID'].') "class="'.$table_color.' tr-'.$row['Status'].'">';
             echo  '<th scope="row">Purpose</th>';
             echo  '<td>'.$row['Purpose'].'</td>';
             echo  '</tr>';
-            echo  '<tr onclick="goToCReceipt('.$row['TransactionID'].') "class='.$table_color.'>';
-            echo  '<th scope="row">Requested Date/Time</th>';
+            echo  '<tr onclick="goToCReceipt('.$row['TransactionID'].') "class="'.$table_color.' tr-'.$row['Status'].'">';
+            echo  '<th scope="row">Approved Consultation Schedule</th>';
             if ($row['Date'] != null) {
                 echo  '<td >'.$row['Date']->format('M d, Y') .'<br>'.$row['Date']->format('h:i a') .'</td>';
             } else {
@@ -103,7 +105,7 @@
 
             }
             echo  '</tr>';
-            echo  '<tr onclick="goToCReceipt('.$row['TransactionID'].') "class='.$table_color.'>';
+            echo  '<tr onclick="goToCReceipt('.$row['TransactionID'].') "class="'.$table_color.' tr-'.$row['Status'].'">';
             echo  '<th scope="row">Date Submitted</th>';
             if ($row['DateSubmitted'] != null) {
                 echo  '<td>'.$row['DateSubmitted']->format('M d, Y') .'<br>'.$row['DateSubmitted']->format('h:i a') .'</td>';
@@ -111,16 +113,16 @@
                 echo '<td></td>'; // Or any other message you want to display for null values
             }
             echo  '</tr>';
-            echo  '<tr onclick="goToCReceipt('.$row['TransactionID'].') "class='.$table_color.'>';
-            echo  '<th scope="row">Date Approved</th>';
-            if ($row['DateApproved'] != null) {
-                echo '<td>'.$row['DateApproved']->format('M d, Y') . '<br>' . $row['DateApproved']->format('h:i a').'</td>';
-            } 
-            else {
-                echo '<td></td>'; // Or any other message you want to display for null values
-            }
-            echo  '</tr>';
-            echo  '<tr onclick="goToCReceipt('.$row['TransactionID'].') "class='.$table_color.'>';
+            // echo  '<tr onclick="goToCReceipt('.$row['TransactionID'].') "class='.$table_color.'>';
+            // echo  '<th scope="row">Date Approved</th>';
+            // if ($row['DateApproved'] != null) {
+            //     echo '<td>'.$row['DateApproved']->format('M d, Y') . '<br>' . $row['DateApproved']->format('h:i a').'</td>';
+            // } 
+            // else {
+            //     echo '<td></td>'; // Or any other message you want to display for null values
+            // }
+            // echo  '</tr>';
+            echo  '<tr onclick="goToCReceipt('.$row['TransactionID'].') " class="'.$table_color.' tr-'.$row['Status'].'">';
             echo  '<th scope="row">Remarks</th>';
             echo  '<td>'.$row['Remarks'].'</td>';
             echo  '</tr>';

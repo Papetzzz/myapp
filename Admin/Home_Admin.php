@@ -1,6 +1,10 @@
 <?php
 
 session_start();
+if (!(isset($_SESSION['UserID']) && isset($_SESSION['UserName']))) {
+    header('../Location: LoginPage.php');
+    exit();
+}
 $IsAdmin = $_SESSION['IsAdmin'];
 $RegType = $_SESSION['RegType'];
 
@@ -108,7 +112,7 @@ function countConsultation($conn) {
     <header id="header" class="header fixed-top d-flex align-items-center">
 
         <div class="d-flex align-items-center justify-content-between">
-            <a href="Home.php" class="logo d-flex align-items-center">
+            <a href="Home_Admin.php" class="logo d-flex align-items-center">
                 <img src="../assets/img/logo.png" alt="">
                 <span style="font-size: 20px" class="d-none d-lg-block">CpE Communication</span>
             </a>
@@ -290,12 +294,12 @@ function countConsultation($conn) {
                             <hr class="dropdown-divider">
                         </li>
 
-                        <li>
+                        <!-- <li>
                             <a class="dropdown-item d-flex align-items-center" href="mailto:delarocamarckjoseph16@gmail.com">
                                 <i class="bi bi-question-circle"></i>
                                 <span>Need Help?</span>
                             </a>
-                        </li>
+                        </li> -->
                         <li>
                             <hr class="dropdown-divider">
                         </li>
@@ -435,6 +439,8 @@ function countConsultation($conn) {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="col-12" id="divAlertPart">
                     </div>
                     <div class="col-md-6">
                         <div class="card pointer info-card sales-card">
@@ -651,11 +657,18 @@ function countConsultation($conn) {
                 </tr>
                 <tr class="table_color">
                     <td colspan="2"><a href="#" onclick="ResetPass(TransactNum)">Reset Pass</a></td>
-                    <td colspan="2"><a href="#" onclick="EditUser(TransactNum)">Edit</a></td>
+                    <td colspan="2"><a href="#" onclick="EditUser(event,TransactNum)">Edit</a></td>
                     <td colspan="2"><a href="#" onclick="DeleteUser(TransactNum)">Delete</a></td>
                 </tr>
             </tbody>
         </table>
+        <div id="alertTemplateSuccess">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle me-1"></i>
+                Message
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
     </div>
 
 
@@ -693,7 +706,7 @@ function countConsultation($conn) {
                 success: function(response) {
                     $('#tbodyProfTable').empty()
                     $('#tbodyStudentTable').empty()
-                    console.log(response);
+                    // console.log(response);
                     // Handle response data if needed
                     if (response.length > 0) {
                         var countPR = 0;
@@ -747,16 +760,19 @@ function countConsultation($conn) {
             });
         }
         var edited_user = [];
-        function EditUser(TransactNum){
-            edited_user.push(TransactNum);
-            var user_name = $('#UserName'+TransactNum).html()
-            $('#UserName'+TransactNum).html('<input type="text" class="form-control" value="'+user_name+'">').trigger( "focusin" )
-            $('#UserName'+TransactNum).trigger( "focusin" )
-            var user_idnum = $('#UserIdNumber'+TransactNum).html()
-            $('#UserIdNumber'+TransactNum).html('<input type="text" class="form-control" value="'+user_idnum+'">')
-            // $('#UserIdNumber'+TransactNum).trigger( "focusin" )
-            $('#flexSwitchActive'+TransactNum).prop('disabled',false)
-            $('#flexSwitchAdmin'+TransactNum).prop('disabled',false)
+        function EditUser(event,TransactNum){
+            event.preventDefault();
+            if (!(edited_user.includes(TransactNum))){
+                edited_user.push(TransactNum);
+                var user_name = $('#UserName'+TransactNum).html()
+                $('#UserName'+TransactNum).html('<input type="text" class="form-control" value="'+user_name+'">').trigger( "focusin" )
+                $('#UserName'+TransactNum).trigger( "focusin" )
+                var user_idnum = $('#UserIdNumber'+TransactNum).html()
+                $('#UserIdNumber'+TransactNum).html('<input type="text" class="form-control" value="'+user_idnum+'">')
+                // $('#UserIdNumber'+TransactNum).trigger( "focusin" )
+                $('#flexSwitchActive'+TransactNum).prop('disabled',false)
+                $('#flexSwitchAdmin'+TransactNum).prop('disabled',false)
+            }
         }
         function DeleteUser(TransactNum){
             $.ajax({
@@ -818,21 +834,43 @@ function countConsultation($conn) {
             
         }
     </script>
-    <?php
-    if ($IsAdmin == 1){
-        echo '<script>';
-        echo '$(function() {';
-        echo '$("#adminItem").show();';
-        echo '});';
-        echo '</script>';
-    }
-    echo '<script>';
-    echo '$(function() {';
-    echo '$("#sidebar'.$RegType.'").show();';
-    echo '});';
-    echo '</script>';
-    ?>
+    
+    
     <script>
+        function ResetPass(UserID){
+                $.ajax({
+                    url: 'ResetPass.php',
+                    type: 'GET',
+                    dataType: 'text',
+                    data: {
+                       
+                        UserId: UserID,
+            
+                    },
+                    success: function(response) {
+                        if (response == "Success"){
+                            var a = $('#alertTemplateSuccess').html()
+                            a = a.replace('Message','Password is reset.')
+                            $('#divAlertPart').append(a);
+                            $('html, body').animate({
+                                scrollTop: $('#divAlertPart').offset().top - 100
+                            }, 'slow');
+                            setTimeout(function(){
+                                $('#divAlertPart').empty()
+                            },10000)
+
+                        }
+                    },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    console.error(status);
+                    console.error(error);
+                    console.error('Failed to Reset Password');
+                }
+                })
+            }
+    
+
         $(function() {
             $('#logoutButton').click(function() {
                 $.ajax({
@@ -854,6 +892,22 @@ function countConsultation($conn) {
                 });
             });
         });
+
+
     </script>
+    <?php
+        if ($IsAdmin == 1){
+            echo '<script>';
+            echo '$(function() {';
+            echo '$("#adminItem").show();';
+            echo '});';
+            echo '</script>';
+        }
+        echo '<script>';
+        echo '$(function() {';
+        echo '$("#sidebar'.$RegType.'").show();';
+        echo '});';
+        echo '</script>';
+    ?>
 </body>
 </html>

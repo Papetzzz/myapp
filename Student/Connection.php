@@ -23,7 +23,7 @@ if (!empty($trimmedName) && !empty($trimmedIDNumber) && !empty($trimmedPassword)
 
      if( sqlsrv_execute($result)) {
           echo "Registration Successful!";
-          header('Location: '.'../Login.html');
+          header('Location: '.'../LoginPage.php');
           die();
      }else{
           echo "Connection could not be established.<br />";

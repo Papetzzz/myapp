@@ -39,7 +39,26 @@
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
 </head>
+<?php
+    $errors = array('defaultPass' =>'');
+    $DefaultPassword = "CPEADMIN2024";
 
+    if (isset($_POST['Password'])){
+      if ($_POST['Password'] !== $DefaultPassword){
+          $errors['defaultPass']="Password invalid";
+      } else {
+?>
+        <script>
+          $(function(){
+            $('#divAdminVerify').hide();
+            $('#divAdminCreate').show('fast');
+          })
+
+        </script>
+  <?php
+      }
+    }
+  ?>
 <body>
 
   <main>
@@ -58,7 +77,7 @@
                 </a>
               </div><!-- End Logo -->
 
-              <div class="card mb-3">
+              <div class="card mb-3" id="divAdminCreate"  style="display: none;">
 
                 <div class="card-body">
 
@@ -85,6 +104,7 @@
                           $('#yourEmail').focusout(function(){
                             checkIdNumber($(this).val());
                           })
+                          var Idexists = false;
                           function checkIdNumber(IdNum){
                             $.ajax({
                                 url: '../fetch_Id.php',
@@ -93,9 +113,13 @@
                                 dataType: 'json',
                                 success: function(response) {
                                       if (response.exists == 1){
+                                        Idexists = true;
+                                        $('#btnAdminCreate').prop('disabled',true)
                                         $('#divIDAlert').text(IdNum + ' is already registered in the system');
                                       } else if (response.exists ==0) {
+                                        $('#btnAdminCreate').prop('disabled',false)
                                         $('#divIDAlert').text('');
+                                        Idexists = false;
                                       }
                                 },
                                 error: function(xhr, status, error) {
@@ -115,30 +139,62 @@
                     <div class="col-12">
                       <label for="yourUsername" class="form-label">Password</label>
                       <div class="has-validation">
-                        <input type="password" name="Password" class="form-control" id="yourUsername" placeholder="Password" required>
-                        <div class="invalid-feedback">Please choose a username.</div>
+                        <input type="password" name="Password" class="form-control" id="yourUsername" placeholder="Password" minlength="6" required>
+                        <div class="invalid-feedback text-wrap">Please create a stronger password.
+                          <span class="badge border-danger border-1 text-danger">(Atleast 6 characters that is a combination of lower and upper cases, numbers, and symbols)</span>
+                        </div>
                       </div>
                     </div>
  
 
-                    <div class="col-12">
+                    <!-- <div class="col-12">
                       <div class="form-check">
                         <input class="form-check-input" name="terms" type="checkbox" value="" id="acceptTerms" required>
                         <label class="form-check-label" for="acceptTerms">I agree and accept the <a href="#">terms and conditions</a></label>
                         <div class="invalid-feedback">You must agree before submitting.</div>
                       </div>
+                    </div> -->
+                    <div class="col-12">
+                      <button class="btn btn-primary w-100" type="submit" id="btnAdminCreate">Create Account</button>
                     </div>
                     <div class="col-12">
-                      <button class="btn btn-primary w-100" type="submit">Create Account</button>
-                    </div>
-                    <div class="col-12">
-                      <p class="small mb-0">Already have an account? <a href="../Login.html">Log in</a></p>
+                      <p class="small mb-0">Already have an account? <a href="../LoginPage.php">Log in</a></p>
                     </div>
                   </form>
 
                 </div>
               </div>
+              <div class="card mb-3" id="divAdminVerify">
 
+                <div class="card-body">
+
+                  <div class="pt-4 pb-2 text-center">
+                    <h5 class="card-title text-center pb-0 fs-4">Verify Admin</h5>
+                    <p class="text-center small mb-0">Enter admin's password for verification.</p>
+                    <span class="badge rounded-pill bg-light text-primary">ADMIN</span>
+                  </div>
+
+                  <form class="row g-3 needs-validation" action="admin.php"method="post" novalidate>                    
+                    <div class="small text-primary" id="divIDAlert"></div>
+
+                    <div class="col-12">
+                      <label for="yourUsername" class="form-label">Password</label>
+                      <div class="has-validation">
+                        <input type="password" name="Password" class="form-control" id="yourUsername" placeholder="Password" required>
+                        <div class="invalid-feedback text-wrap">Please enter password.</div>
+                        <span class="invalid-feedback text-wrap" style="display:block"><?php echo $errors['defaultPass'];?></span>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <button class="btn btn-primary w-100" type="submit" name="submit" value="submit" id="btnAdminCreate">Create Account</button>
+                    </div>
+                    <div class="col-12">
+                      <p class="small mb-0">Already have an account? <a href="../LoginPage.php">Log in</a></p>
+                    </div>
+                  </form>
+
+                </div>
+              </div>
         
 
             </div>

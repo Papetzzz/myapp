@@ -34,11 +34,11 @@ try {
                 a.Remarks,
                 dt.Type
                 FROM Transactions_table a
-                join Users_table u on a.ProfessorID = u.UserID	
-                join TransactionMode_table tm on a.TransactionModeID = tm.TransactionModeID
-                join Section_table s on a.SectionID = s.SectionID
-                join Status_Table st on a.StatusID = st.StatusID
-                JOIN DocumentType_Table dt on a.DocumentTypeId = dt.DocumentTypeId
+                LEFT join Users_table u on a.ProfessorID = u.UserID	
+                LEFT join TransactionMode_table tm on a.TransactionModeID = tm.TransactionModeID
+                LEFT join Section_table s on a.SectionID = s.SectionID
+                LEFT join Status_Table st on a.StatusID = st.StatusID
+                LEFT JOIN DocumentType_Table dt on a.DocumentTypeId = dt.DocumentTypeId
                 where  a.UserID = ".$_SESSION['UserID']."
                     AND a.TransactionDate BETWEEN '".$startDate."' AND getdate()
                     ORDER BY a.TransactionDate DESC"; // Dynamically order the results based on $orderBy and $direction

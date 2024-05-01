@@ -1,6 +1,10 @@
 <?php
 
 session_start();
+if (!(isset($_SESSION['UserID']) && isset($_SESSION['UserName']))) {
+    header('Location: LoginPage.php');
+    exit();
+}
 $IsAdmin = $_SESSION['IsAdmin'];
 
 $serverName = "DESKTOP-94I5S6B\SQLEXPRESS"; //serverName\instanceName
@@ -92,6 +96,7 @@ function countSubmission($conn) {
 
     <!-- Template Main CSS File -->
     <link href="assets/css/style.css" rel="stylesheet">
+    <link href="myStyles/myCss.css" rel="stylesheet">
 
     <!-- =======================================================
     * Template Name: NiceAdmin
@@ -232,12 +237,12 @@ function countSubmission($conn) {
                             <hr class="dropdown-divider">
                         </li>
 
-                        <li>
+                        <!-- <li>
                             <a class="dropdown-item d-flex align-items-center" href="mailto:delarocamarckjoseph16@gmail.com">
                                 <i class="bi bi-question-circle"></i>
                                 <span>Need Help?</span>
                             </a>
-                        </li>
+                        </li> -->
                         <li>
                             <hr class="dropdown-divider">
                         </li>
@@ -455,30 +460,30 @@ function countSubmission($conn) {
         </table>
         <table class="table table-bordered border-primary text-center">
             <tbody id="consultationRequestsTemplate">
-                <tr class="table_color" style="border-top-width: thick">
+                <tr class="table_color table_status" style="border-top-width: thick">
                     <th>Professor: </th>
                     <td>Name_Professor</td>
                 </tr>
-                <tr class="table_color">
+                <tr class="table_color table_status">
                     <th>Purpose: </th>
                     <td>RequestPurpose</td>
                 </tr>
-                <tr class="table_color">
+                <tr class="table_color table_status">
                     <th>Status: </th>
                     <td>RequestStatus</td>
                 </tr>
-                <tr class="table_color">
+                <tr class="table_color table_status">
                     <th>Date Submitted: </th>
                     <td>RequestDate</td>
                 </tr>
-                <tr class="table_color">
-                    <th>Date/Time Suggested: </th>
+                <tr class="table_color table_status">
+                    <th>Consultation Schedule: </th>
                     <td>RequestDateTime</td>
                 </tr>
-                <tr class="table_color">
+                <tr class="table_color table_status">
                     <th colspan="2">Remarks: </th>
                 </tr>
-                <tr class="table_color">
+                <tr class="table_color table_status">
                     <td colspan="2">RequestRemarks </td>
                 </tr>
                 
@@ -570,7 +575,7 @@ function countSubmission($conn) {
                             var c = $('#consultationRequestsTemplate').html()
                             c = c.replace("Name_Professor",field.Name)
                             c = c.replace("RequestPurpose",field.Purpose)
-                            c = c.replace("RequestStatus",field.Status)
+                            c = c.replace("RequestStatus",field.Status) 
                             var submittedDateTime = field.DateSubmitted.date
                             var formattedSubmittedDate = new Date(submittedDateTime.replace(/-/g, '/')).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false});
                             c = c.replace("RequestDate",formattedSubmittedDate)
@@ -578,7 +583,11 @@ function countSubmission($conn) {
                             var formattedSuggestedDate = new Date(suggestedDateTime.replace(/-/g, '/')).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false});
                             c = c.replace("RequestDateTime",formattedSuggestedDate)
                             c = c.replace("RequestRemarks",field.Remarks ? field.Remarks:' - ')
-                            
+                            if (field.Status == 'Approved'){
+                                c = c.replace(/table_status/g,'tr-Approved')
+                            }else if (field.Status == 'Rejected'){
+                                c = c.replace(/table_status/g,'tr-Rejected')
+                            }
                             if (countC%2 == 1){
                                 c = c.replace(/table_color/g,'table-active')
                             } 

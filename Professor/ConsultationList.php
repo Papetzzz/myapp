@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!(isset($_SESSION['UserID']) && isset($_SESSION['UserName']))) {
+    header('../Location: LoginPage.php');
+    exit();
+}
 $IsAdmin = $_SESSION['IsAdmin'];
 
 ?>
@@ -32,6 +36,7 @@ $IsAdmin = $_SESSION['IsAdmin'];
 
     <!-- Template Main CSS File -->
     <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="../myStyles/myCss.css" rel="stylesheet">
 
     <!-- =======================================================
     * Template Name: NiceAdmin
@@ -535,8 +540,7 @@ $IsAdmin = $_SESSION['IsAdmin'];
                 type: 'GET',
                 data: { orderBy: orderBy, 
                     direction: direction,
-                    dateFilter: dateRange,
-                    statusCode: 'N'
+                    dateFilter: dateRange
                  },
                 dataType: 'html',
                 success: function(response) {

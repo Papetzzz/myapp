@@ -2,6 +2,10 @@
 
 session_start();
 $IsAdmin = $_SESSION['IsAdmin'];
+if (!(isset($_SESSION['UserID']) && isset($_SESSION['UserName']))) {
+    header('Location: LoginPage.php');
+    exit();
+}
 // Ensure TransactionId parameter is provided
 if(!is_null($_GET['TransactionId'])) {
     

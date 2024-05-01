@@ -22,7 +22,7 @@ if (!empty($trimmedName) && !empty($trimmedIDNumber) && !empty($trimmedPassword)
 
      if( sqlsrv_execute($result)) {
           echo "Registration Successful!";
-          header('Location: '.'../Login.html');
+          header('Location: '.'../LoginPage.php');
           die();
      }else{
           echo "Connection could not be established.<br />";
@@ -36,7 +36,7 @@ if (!empty($trimmedName) && !empty($trimmedIDNumber) && !empty($trimmedPassword)
           die( print_r( sqlsrv_errors(), true));
      }
 } else {
-     header('Location: '.'../Professor/Professor.html');
+     header('Location: '.'../Professor/Professor.php');
      echo "<script>
           var form = $('#studentRegForm');
           form.addClass('was-validated');

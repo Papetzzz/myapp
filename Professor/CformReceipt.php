@@ -1,5 +1,10 @@
 <?php
 session_start();
+if (!(isset($_SESSION['UserID']) && isset($_SESSION['UserName']))) {
+    header('Location: ../LoginPage.php');
+    exit();
+}
+$IsAdmin = $_SESSION['IsAdmin'];
 if(isset($_GET['TransactionId']) && $_GET['TransactionId'] !== null) {
     
     
@@ -351,12 +356,12 @@ else {
             </a>
             <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                 <li>
-                    <a href="../DocumentList.php">
+                    <a href="DocumentList.php">
                         <i class="bi bi-circle"></i><span>Document Submission List</span>
                     </a>
                 </li>
                 <li>
-                    <a href="../ConsultationList.php">
+                    <a href="ConsultationList.php">
                         <i class="bi bi-circle"></i><span>Consultation List</span>
                     </a>
                 </li>

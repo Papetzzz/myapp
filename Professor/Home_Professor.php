@@ -1,5 +1,9 @@
 <?php
 session_start();
+if (!(isset($_SESSION['UserID']) && isset($_SESSION['UserName']))) {
+    header('Location: ../LoginPage.php');
+    exit();
+}
 $IsAdmin = $_SESSION['IsAdmin'];
 
 
@@ -37,6 +41,7 @@ $IsAdmin = $_SESSION['IsAdmin'];
 
     <!-- Template Main CSS File -->
     <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="../myStyles/myCss.css" rel="stylesheet">
 
     <!-- =======================================================
     * Template Name: NiceAdmin
@@ -241,12 +246,12 @@ $IsAdmin = $_SESSION['IsAdmin'];
                             <hr class="dropdown-divider">
                         </li>
 
-                        <li>
+                        <!-- <li>
                             <a class="dropdown-item d-flex align-items-center" href="mailto:delarocamarckjoseph16@gmail.com">
                                 <i class="bi bi-question-circle"></i>
                                 <span>Need Help?</span>
                             </a>
-                        </li>
+                        </li> -->
                         <li>
                             <hr class="dropdown-divider">
                         </li>
@@ -423,19 +428,43 @@ $IsAdmin = $_SESSION['IsAdmin'];
 
 
                 </div>
-                <div id="divConsultationCards">
-                    <div class="row consultCardToday" style="display: none">
-                        <h5 class="card-title mx-3">Requested Today</h5>
+                <ul class="nav nav-pills d-flex" id="myTabjustified" role="tablist">
+                    <li class="nav-item flex-fill" role="presentation">
+                        <button class="border nav-link w-100" id="document-tab" data-bs-toggle="tab" data-bs-target="#profile-justified" type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1"><u><b>Pending Documents</b></u></button>
+                    </li>
+                    <li class="nav-item flex-fill" role="presentation">
+                        <button class="border nav-link w-100 active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#divConsultationCards" type="button" role="tab" aria-controls="profile" aria-selected="true"><u><b>Pending Consultation Requests</b></u></button>
+                    </li>
+                </ul>
+                <div class="tab-content pt-2" id="myTabjustifiedContent">
+                    <div  class="tab-pane fade active show" role="tabpanel" aria-labelledby="profile-tab" id="divConsultationCards">
+                        <div class="row consultCardToday" style="display: none">
+                            <h5 class="card-title mx-3">Requested Today</h5>
+                        </div>
+                        <div class="row consultCardThisWeek" style="display: none">
+                            <hr>
+                            <h5 class="card-title mx-3">Requested This Week</h5>
+                        </div>
+                        <div class="row consultCardOthers" style="display: none">
+                            <hr>
+                            <h5 class="card-title mx-3">Requested Others</h5>
+                        </div>
                     </div>
-                    <div class="row consultCardThisWeek" style="display: none">
-                        <hr>
-                        <h5 class="card-title mx-3">Requested This Week</h5>
-                    </div>
-                    <div class="row consultCardOthers" style="display: none">
-                        <hr>
-                        <h5 class="card-title mx-3">Requested Others</h5>
+                    <div  class="tab-pane fade active show" role="tabpanel" aria-labelledby="profile-tab" id="divSubmissionCards">
+                        <div class="row submitCardToday" style="display: none">
+                            <h5 class="card-title mx-3">Requested Today</h5>
+                        </div>
+                        <div class="row submitCardThisWeek" style="display: none">
+                            <hr>
+                            <h5 class="card-title mx-3">Requested This Week</h5>
+                        </div>
+                        <div class="row submitCardOthers" style="display: none">
+                            <hr>
+                            <h5 class="card-title mx-3">Requested Others</h5>
+                        </div>
                     </div>
                 </div>
+               
 
             </section>
             <div id="professorTemplates" style="display: none">
@@ -452,7 +481,7 @@ $IsAdmin = $_SESSION['IsAdmin'];
                                     <div class="text-start"><span class="badge border-light border-1 text-black-50 mt-3">submittedDate</span></div>
                                     <h5 class="card-title pt-0">Section_Desc - userName</h5>
                                     <h6 class="card-subtitle mb-2 text-muted"><b>Purpose: </b>$Purpose</h6>
-                                    <h6 class="card-subtitle mb-2 text-muted"><b>Date Suggested: </b>requestedDate</h6>
+                                    <h6 class="card-subtitle mb-2 text-muted"><b>Consultation Schedule: </b>requestedDate</h6>
                                     <!-- <h6 class="card-subtitle mb-2 text-muted"><b>Date Submitted: </b>submittedDate</h6> -->
 
                                     <div class="col-12 text-start mb-3" id="divReasonTransactNum" style="display: none;">
@@ -480,6 +509,31 @@ $IsAdmin = $_SESSION['IsAdmin'];
                             </div>
                         </div>
                 </div>
+                <div id="divSubmitCardsTemplate">
+                    <div class="col-md-6" id="submitCardTransactNum">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <div class="text-start"><span class="badge border-light border-1 text-black-50 mt-3">submittedDate</span></div>
+                                    <h5 class="card-title pt-0">Section_Desc - userName</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted"><b>Purpose: </b>$Purpose</h6>
+                                    <h6 class="card-subtitle mb-2 text-muted"><b>Consultation Schedule: </b>requestedDate</h6>
+                                    <!-- <h6 class="card-subtitle mb-2 text-muted"><b>Date Submitted: </b>submittedDate</h6> -->
+
+                                    <div class="col-12 text-start mb-3" id="divReasonTransactNum" style="display: none;">
+                                        <label for="inputReasonTransactNum" class="form-label">Remarks:</label>
+                                        <textarea type="text" class="form-control" id="inputReasonTransactNum" placeholder="Please provide reason for declining"></textarea>
+                                    </div>
+                                    <hr>
+                                    <div class="row" id="rowAcceptDeclineTransactNum">
+                                        <!-- <p class="card-text col-md-6 mb-1">Do you want to accept this consultation?</p> -->
+                                            <button class="btn btn-primary  col me-2" onclick="receivedDocument(TransactNum)">
+                                                <i class="bi bi-check-circle me-1"></i>Received
+                                            </button>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
             </div>
         </main>
 
@@ -527,7 +581,27 @@ $IsAdmin = $_SESSION['IsAdmin'];
 
         });
 
-
+        function receivedDocument(TransactNum){
+            $.ajax({
+                url: 'update_documentreceived.php',
+                type: 'POST',
+                data: {
+                    TransactionID: TransactNum
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response)
+                    $("#submitCard"+TransactNum).hide('slow');
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    console.error(status);
+                    console.error(error);
+                    console.error('Failed to update status');
+                }
+            });
+        
+        }
 
         function remarksText(TransactNum){
             // alert(`isAccepted: ${isAccepted}; isDenied: ${isDenied}`)
@@ -597,7 +671,7 @@ $IsAdmin = $_SESSION['IsAdmin'];
 
     </script>
 
-    <script src="../myScripts/checkRecords.js"></script>
+    <script src="../myScripts/checkRecords.js?v=27April2024"></script>
     
     <?php
     if ($IsAdmin == 1){

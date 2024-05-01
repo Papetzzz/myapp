@@ -1,5 +1,10 @@
 <?php
     session_start();
+    if (!(isset($_SESSION['UserID']) && isset($_SESSION['UserName']))) {
+        header('../Location: LoginPage.php');
+        exit();
+    }
+    $IsAdmin = $_SESSION['IsAdmin'];
 // Ensure TransactionId parameter is provided
 if(isset($_GET['TransactionId'])) {
     
@@ -85,7 +90,7 @@ else {
     <link href="../assets/vendor/simple-datatables/style.css" rel="stylesheet">
 
     <!-- Template Main CSS File -->
-    <link href="../assets/css/style.css" rel="stylesheet">
+    <link href="../assets/css/style.css" rel="stylesheet"> 
     <!-- My Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <!-- =======================================================
@@ -100,7 +105,7 @@ else {
     <header id="header" class="header fixed-top d-flex align-items-center">
 
         <div class="d-flex align-items-center justify-content-between">
-            <a href="Home_Professor.html" class="logo d-flex align-items-center">
+            <a href="Home_Professor.php" class="logo d-flex align-items-center">
                 <img src="../assets/img/logo.png" alt="">
                 <span style="font-size: 20px" class="d-none d-lg-block">CpE Communication</span>
             </a>

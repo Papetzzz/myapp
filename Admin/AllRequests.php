@@ -1,6 +1,10 @@
 <?php
 
 session_start();
+if (!(isset($_SESSION['UserID']) && isset($_SESSION['UserName']))) {
+    header('../Location: LoginPage.php');
+    exit();
+}
 $IsAdmin = $_SESSION['IsAdmin'];
 $RegType = $_SESSION['RegType'];
 
@@ -108,7 +112,7 @@ function countConsultation($conn) {
     <header id="header" class="header fixed-top d-flex align-items-center">
 
         <div class="d-flex align-items-center justify-content-between">
-            <a href="Home.php" class="logo d-flex align-items-center">
+            <a href="#" class="logo d-flex align-items-center">
                 <img src="../assets/img/logo.png" alt="">
                 <span style="font-size: 20px" class="d-none d-lg-block">CpE Communication</span>
             </a>
@@ -289,12 +293,12 @@ function countConsultation($conn) {
                             <hr class="dropdown-divider">
                         </li>
 
-                        <li>
+                        <!-- <li>
                             <a class="dropdown-item d-flex align-items-center" href="mailto:delarocamarckjoseph16@gmail.com">
                                 <i class="bi bi-question-circle"></i>
                                 <span>Need Help?</span>
                             </a>
-                        </li>
+                        </li> -->
                         <li>
                             <hr class="dropdown-divider">
                         </li>
@@ -385,7 +389,7 @@ function countConsultation($conn) {
                         </a>
                     </li>
                     <li>
-                        <a href="AllDocuments.php">
+                        <a href="AllRequests.php">
                             <i class="bi bi-circle"></i><span>All Requests</span>
                         </a>
                     </li>
@@ -497,7 +501,7 @@ function countConsultation($conn) {
                                             </div>
                                         </div>
                                         <div class="col-md-12">
-                                            <h6 class="card-title">Suggested Date</h6>
+                                            <h6 class="card-title">Consultation Schedule</h6>
                                         </div>
                                         <div class="col-md-6 row mb-3">
                                             <label class="col-sm-4 col-form-label">From:</label>
@@ -587,30 +591,34 @@ function countConsultation($conn) {
         </table>
         <table class="table table-bordered border-primary text-center">
             <tbody id="consultationRequestsTemplate">
-                <tr class="table_color" style="border-top-width: thick">
+                <tr class="table_color table_status" style="border-top-width: thick">
                     <th>Professor: </th>
                     <td>Name_Professor</td>
                 </tr>
-                <tr class="table_color">
+                <tr class="table_color table_status">
+                    <th>Student: </th>
+                    <td>Name_Student</td>
+                </tr>
+                <tr class="table_color table_status">
                     <th>Purpose: </th>
                     <td>RequestPurpose</td>
                 </tr>
-                <tr class="table_color">
+                <tr class="table_color table_status">
                     <th>Status: </th>
                     <td>RequestStatus</td>
                 </tr>
-                <tr class="table_color">
+                <tr class="table_color table_status">
                     <th>Date Submitted: </th>
                     <td>RequestDate</td>
                 </tr>
-                <tr class="table_color">
-                    <th>Date/Time Suggested: </th>
+                <tr class="table_color table_status">
+                    <th>Consultation Schedule: </th>
                     <td>RequestDateTime</td>
                 </tr>
-                <tr class="table_color">
+                <tr class="table_color table_status">
                     <th colspan="2">Remarks: </th>
                 </tr>
-                <tr class="table_color">
+                <tr class="table_color table_status">
                     <td colspan="2">RequestRemarks </td>
                 </tr>
                 
@@ -650,7 +658,7 @@ function countConsultation($conn) {
     echo '</script>';
     ?>
     
-    <script src="../myScripts/adminRequestRecords.js"></script>
+    <script src="../myScripts/adminRequestRecords.js?v=29April2024"></script>
     <script>
         $(function() {
             fetchRequests()

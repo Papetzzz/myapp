@@ -1,5 +1,9 @@
 <?php
     session_start();
+    if (!(isset($_SESSION['UserID']) && isset($_SESSION['UserName']))) {
+        header('Location: LoginPage.php');
+        exit();
+    }
     $userName = $_SESSION['UserName'];
     $IsAdmin = $_SESSION['IsAdmin'];
 ?>
@@ -326,7 +330,7 @@
 
                             <div class="row mb-3">
                                 <div class= "col-sm-4">
-                                    <label for="yearSelect" class="form-label">Year Level:</label>
+                                    <label for="yearSelect" class="form-label">Year Level: <span class="text-danger">*</span></label>
                                     <select class="form-select" aria-label="Default select example" id="yearSelect"name="yearSelect" required>
                                         <option selected="">Select year</option>
                                         <?php
@@ -355,7 +359,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-8">
-                                    <label for="name" class="form-label">Section:</label>
+                                    <label for="name" class="form-label">Section: <span class="text-danger">*</span></label>
                                     <select class="form-select" aria-label="Default select example" id="sectionSelect" name="sectionSelect" required>
                                         <option selected="">Select section</option>
                                     </select>
@@ -437,9 +441,9 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="section" class="form-label">Document Type:</label>
+                                <label for="section" class="form-label">Document Type: <span class="text-danger">*</span></label>
                                 <select class="form-select" aria-label="Default select example" id="documentType" name="documentType" required>
-                                    <option selected="">Select Document Type</option>
+                                    <option value="0" selected="">Select Document Type</option>
                                     <?php
                                         $serverName = "DESKTOP-94I5S6B\\SQLEXPRESS"; // serverName\instanceName
                                         $connectionInfo = array("Database" => "CpE_Transactions");
@@ -472,14 +476,14 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="purpose" class="form-label">Purpose of Submission:</label>
+                                <label for="purpose" class="form-label">Purpose of Submission: <span class="text-danger">*</span></label>
                                 <textarea class="form-control" id="purpose" name="purpose" rows="4" required></textarea>
                                 <div class="invalid-feedback">
                                             Please fill your purpose.
                                  </div>
                             </div>
                             <div class="mb-3">
-                                <label for="pro" class="form-label">Professor's Name:</label>
+                                <label for="pro" class="form-label">Professor's Name: <span class="text-danger">*</span></label>
                                 <?php
                                     try {
                                         $serverName = "DESKTOP-94I5S6B\\SQLEXPRESS"; //serverName\instanceName
@@ -526,9 +530,14 @@
                                             Please select Professor.
                                     </div>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100" id="dFormSubmitBtn">
+                            <button class="btn btn-primary w-100" id="dFormSubmitBtn">
                                 <!--  data-bs-toggle="modal" data-bs-target="#verticalycentered" -->
                                 Submit
+                            </button><!--type="submit"-->
+                            
+                        </form>
+                        <button class="btn btn-primary w-100" id="dFormSubmitModal" data-bs-toggle="modal" data-bs-target="#verticalycentered" hidden> 
+                                ShowModal
                             </button><!--type="submit"-->
                             <div class="modal fade" id="verticalycentered" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered">
@@ -550,17 +559,19 @@
                                     </div>
                                 </div>
                             </div><!-- End Vertically centered Modal-->
-                        </form>
                         <script>
                             $(document).ready(function() {
                                 var isFormValid = false; // Flag to track form validation status
 
                                 // Check form validation before opening the modal
                                 $('#dFormSubmitBtn').click(function() {
+                                    event.preventDefault()
                                     isFormValid = validateForm(); // Validate the form
                                     if (!isFormValid) {
-                                        event.preventDefault()
+                                        
                                         return false; // Prevent the default behavior (opening the modal)
+                                    } else {
+                                        $('#dFormSubmitModal').click()
                                     }
                                 });
 
@@ -571,14 +582,19 @@
                                     // Check each required field
                                     $('input[required], select[required], textarea[required]').each(function() {
                                         // Check if the field is empty
-                                        if (!$(this).val().trim()) {
+                                        if ((!$(this).val().trim()) || ($(this).val() == 0)) {
                                             isValid = false; // Set validation flag as false
                                         }
                                     });
 
                                     // Show an error message if validation fails
                                     if (!isValid) {
-                                        alert('Please fill in all required fields before submitting.');
+                                        var a = $('#alertTemplate').html()
+                                        a = a.replace('Alert_Message','Please fill in all required fields before submitting.')
+                                        $('#divDFormAlerts').append(a)
+                                        setTimeout(function(){
+                                            $('#divDFormAlerts').empty()
+                                        },10000)
                                     }
 
                                     return isValid; // Return the validation flag
@@ -594,9 +610,17 @@
 
         </main>
     
-
+    
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
+    <div style="display: none">
+        <div id="alertTemplate">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-octagon me-1"></i>
+                Alert_Message
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>        
+    </div>
     <!-- Vendor JS Files -->
     <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

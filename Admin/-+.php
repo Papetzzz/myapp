@@ -1,5 +1,10 @@
 <?php
 session_start();
+
+if (!(isset($_SESSION['UserID']) && isset($_SESSION['UserName']))) {
+    header('Location: LoginPage.php');
+    exit();
+}
 // Ensure TransactionId parameter is provided
 if(isset($_GET['TransactionId'])) {
     $userName = $_SESSION['UserName'];

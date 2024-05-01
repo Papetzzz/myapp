@@ -114,11 +114,11 @@ function updateTable(e,dateRange) {
                     let yearAgo = new Date(today);
                     yearAgo.setDate(today.getDate() - 365);
 
-                    console.log(`field.DateSubmitted: ${field.DateSubmitted}
-                    submittedDate: ${submittedDate}
-                    ${submittedDate.toDateString()} === ${today.toDateString()}
-                    sevenDaysAgo: ${sevenDaysAgo}
-                    ${submittedDate.toDateString() === today.toDateString()}`)
+                    // console.log(`field.DateSubmitted: ${field.DateSubmitted}
+                    // submittedDate: ${submittedDate}
+                    // ${submittedDate.toDateString()} === ${today.toDateString()}
+                    // sevenDaysAgo: ${sevenDaysAgo}
+                    // ${submittedDate.toDateString() === today.toDateString()}`)
                     if (submittedDate.toDateString() === today.toDateString()){
                         $('#divConsultationCards .consultCardToday').show('medium')
                         $('#divConsultationCards .consultCardToday').append(card)
@@ -145,5 +145,86 @@ function updateTable(e,dateRange) {
     });
 }
 
+// Function to update the table based on the selected ordering and direction
+function updateTableSub(e,dateRange) {
+    console.log('updateTableSub')
+    count()
+    // Get the selected ordering and direction
+    var orderBy = $('#orderByCSelect').val();
+    var direction = $('#orderCSelect').val();
+    dateRange = dateRange ?? null;
+    
+    console.log('updating table')
+    // Perform an AJAX request to fetch the updated data from the server
+    // Send the selected ordering and direction to the server
+    $.ajax({
+        url: 'load_submit_cards.php',
+        type: 'GET',
+        data: { orderBy: orderBy,
+            direction: direction,
+            dateFilter: dateRange
+         },
+        dataType: 'json',
+        success: function(response) {
+
+            console.log(response)
+            if (response.length > 0){
+                $.each(response, function(i, field){
+
+                    var card = $('#divSubmitCardsTemplate').html();
+                    card = card.replace('Section_Desc',field.Section)
+                    card = card.replace('userName',field.Name)
+                    card = card.replace('$Purpose',field.Purpose)
+                    var sqlDateTimeString = field.Date.date
+                    var formattedDateTime = new Date(sqlDateTimeString.replace(/-/g, '/')).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true});
+
+                    card = card.replace('requestedDate',formattedDateTime)
+                    card = card.replace(/TransactNum/g,field.TransactionID)
+                    var submittedDateTime = field.DateSubmitted.date
+                    var formattedSubmittedDate = new Date(submittedDateTime.replace(/-/g, '/')).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false});
+
+                    card = card.replace(/submittedDate/g,formattedSubmittedDate)
+                    // Get today's date
+                    let today = new Date();
+
+                    // Assuming field.DateSubmitted is in the format "YYYY-MM-DD", you can parse it into a Date object
+                    let submittedDate = new Date(field.DateSubmitted.date);
+                    let sevenDaysAgo = new Date(today);
+                    sevenDaysAgo.setDate(today.getDate() - 7);
+                    let yearAgo = new Date(today);
+                    yearAgo.setDate(today.getDate() - 365);
+
+                    console.log(`field.DateSubmitted: ${field.DateSubmitted}
+                    submittedDate: ${submittedDate}
+                    ${submittedDate.toDateString()} === ${today.toDateString()}
+                    sevenDaysAgo: ${sevenDaysAgo}
+                    ${submittedDate.toDateString() === today.toDateString()}`)
+                    if (submittedDate.toDateString() === today.toDateString()){
+                        $('#divSubmissionCards .submitCardToday').show('medium')
+                        $('#divSubmissionCards .submitCardToday').append(card)
+                    } else if (submittedDate >= sevenDaysAgo && submittedDate <= today) {
+                        // Append the card to the specified div
+                        $('#divSubmissionCards .submitCardThisWeek').show('medium');
+                        $('#divSubmissionCards .submitCardThisWeek').append(card);
+                    } else {
+                        $('#divSubmissionCards .submitCardOthers').show('medium');
+                        $('#divSubmissionCards .submitCardOthers').append(card);
+                    }
+                })
+            }
+
+            // Replace the existing table with the updated table
+            // $('#tbodyCTable').html(response);
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText)
+            console.error(status)
+            console.error(error)
+            console.error('Failed to load consult cards');
+        }
+    });
+}
+
 // Call the updateTable function once initially to populate the table
+updateTableSub();
 updateTable();

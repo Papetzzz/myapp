@@ -36,11 +36,13 @@
                         u.Name,
                         s.Description as Section,
                         d.Type as DocumentName,
-                        a.TransactionDate as Date
+                        a.TransactionDate as Date,
+                        st.Description as Status
                     FROM Transactions_table a
                     JOIN Users_table u ON a.UserID = u.UserID
                     JOIN Section_table s ON a.SectionID = s.SectionID
                     JOIN DocumentType_Table d ON a.DocumentTypeId = d.DocumentTypeId 
+                    JOIN Status_Table st ON a.StatusID = st.StatusID
                     WHERE TransactionModeID = 2 
                         AND a.ProfessorID = ".$_SESSION['UserID']." AND
                         a.TransactionDate BETWEEN '".$startDate."' AND getDate()
@@ -73,20 +75,20 @@
             if ($counter%2 == 0){
                 $table_color='table-active';
             }
-            echo '<tr onclick="goToDReceipt('.$row['TransactionID'].')"  style="border-top-width: thick" class='.$table_color.'>';
+            echo '<tr onclick="goToDReceipt('.$row['TransactionID'].')"  style="border-top-width: thick" class="'.$table_color.' tr-'.$row['Status'].'">';
             echo '<th rowspan="4">'.$counter.'</th>';
             echo '<th scope="col">Name</th>';
             echo '<td scope="row">'.$row['Name'].'</td>';
             echo '</tr>';
-            echo '<tr onclick="goToDReceipt('.$row['TransactionID'].')"  class='.$table_color.'>';
+            echo '<tr onclick="goToDReceipt('.$row['TransactionID'].')"  class="'.$table_color.' tr-'.$row['Status'].'">';
             echo '<th scope="col">Section</th>';
             echo '<td scope="row">'.$row['Section'].'</td>';
             echo '</tr>';
-            echo '<tr onclick="goToDReceipt('.$row['TransactionID'].')" class='.$table_color.'>';
+            echo '<tr onclick="goToDReceipt('.$row['TransactionID'].')" class="'.$table_color.' tr-'.$row['Status'].'">';
             echo '<th scope="col">Document Name</th>';
             echo '<td scope="row">'.$row['DocumentName'].'</td>';
             echo '</tr>';
-            echo '<tr onclick="goToDReceipt('.$row['TransactionID'].')" class='.$table_color.'>';
+            echo '<tr onclick="goToDReceipt('.$row['TransactionID'].')" class="'.$table_color.' tr-'.$row['Status'].'">';
             echo '<th scope="col">Date</th>';
             if ($row['Date'] != null) {
                 echo '<td scope="row">'.$row['Date']->format('M d, Y') .'<br>'.$row['Date']->format('h:i a') .'</td>';

@@ -1,6 +1,10 @@
 <?php
 
 session_start();
+if (!(isset($_SESSION['UserID']) && isset($_SESSION['UserName']))) {
+    header('Location: ../LoginPage.php');
+    exit();
+}
 $IsAdmin = $_SESSION['IsAdmin'];
 $RegType = $_SESSION['RegType'];
 

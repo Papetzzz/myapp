@@ -1,23 +1,45 @@
 <?php
 session_start();
 
-// Check if the 'UserValid' key is set in the session
-if(isset($_SESSION['UserValid'])) {
-    // Retrieve the value of 'UserValid' if it's set
-    if ($_SESSION['UserValid']) {
-        // If 'UserValid' is true, set $IsValid to 1
-        $IsValid = 1;
+$IsValid =isset($_GET['UserValid']) ? $_GET['UserValid'] : '';
+// Check if UserID and UserName session variables are set
+if (!(isset($_SESSION['UserID']) && isset($_SESSION['UserName']))) {
+
+    // Check if UserValid session variable is set
+    if (isset($_SESSION['UserValid'])) {
+        // Retrieve the value of 'UserValid' if it's set
+        if ($_SESSION['UserValid']) {
+            // If 'UserValid' is true, set $IsValid to 1
+            $IsValid = 1;
+        } else {
+            // If 'UserValid' is false, set $IsValid to 0
+            $IsValid = 0;
+        }
     } else {
-        // If 'UserValid' is false, set $IsValid to 0
-        $IsValid = 0;
+        // If 'UserValid' is not set, handle it accordingly (assign default value, redirect, etc.)
+        // For example:
+        $IsValid = 2; // or any other default value you want to assign
     }
-} else {
-    // If 'UserValid' is not set, handle it accordingly (assign default value, redirect, etc.)
-    // For example:
-    $IsValid = 2; // or any other default value you want to assign
+} else{
+  $Regtype = isset($_SESSION['RegType']) ? $_SESSION['RegType'] : '';
+  // print_r('UserName: ' . $_SESSION['UserName']);
+  // print_r('Regtype: ' . $Regtype);
+
+  if ($Regtype == 'PR'){
+    header('Location: Professor/Home_Professor.php');
+    exit();
+  } else if ($Regtype == 'ST'){
+      header('Location: Home.php');
+      exit();
+  }
+    else if ($Regtype == 'A'){
+  header('Location: Admin/Home_Admin.php');
+  exit();
+}
 }
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -106,12 +128,12 @@ if(isset($_SESSION['UserValid'])) {
 
                     </div>
 
-                    <div class="col-12">
+                    <!-- <div class="col-12">
                       <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="remember" value="true" id="rememberMe">
                         <label class="form-check-label" for="rememberMe">Remember me</label>
                       </div>
-                    </div>
+                    </div> -->
                     <div class="col-12">
                       <button class="btn btn-primary w-100" type="submit" >Login</button>
                     </div>
@@ -121,6 +143,13 @@ if(isset($_SESSION['UserValid'])) {
                   </form>
 
                 </div>
+              </div>
+              <div class="credits">
+                <!-- All the links in the footer should remain intact. -->
+                <!-- You can delete the links only if you purchased the pro version. -->
+                <!-- Licensing information: https://bootstrapmade.com/license/ -->
+                <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+                  CPE Transactions | Version 1.0 | English 
               </div>
 
               

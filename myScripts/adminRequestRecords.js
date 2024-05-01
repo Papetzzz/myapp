@@ -63,9 +63,11 @@ function fetchRequests(Mode){
                     
                 }
                 else if (field.Code == 'C'){
+                    console.log(field)
                     countC++;
                     var c = $('#consultationRequestsTemplate').html()
                     c = c.replace("Name_Professor",field.Name)
+                    c = c.replace("Name_Student",field.Student ?field.Student :''   )
                     c = c.replace("RequestPurpose",field.Purpose)
                     c = c.replace("RequestStatus",field.Status)
                     var submittedDateTime = field.DateSubmitted.date
@@ -75,7 +77,14 @@ function fetchRequests(Mode){
                     var formattedSuggestedDate = new Date(suggestedDateTime.replace(/-/g, '/')).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false});
                     c = c.replace("RequestDateTime",formattedSuggestedDate)
                     c = c.replace("RequestRemarks",field.Remarks ? field.Remarks:' - ')
-                    
+                    if (field.Status == 'Approved'){
+                        c = c.replace(/table_status/g,'tr-Approved')
+                    }else if (field.Status == 'Rejected'){
+                        c = c.replace(/table_status/g,'tr-Rejected')
+                    } else {
+                        c = c.replace(/table_status/g,'')
+
+                    }
                     if (countC%2 == 1){
                         c = c.replace(/table_color/g,'table-active')
                     } 

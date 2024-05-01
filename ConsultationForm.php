@@ -1,5 +1,9 @@
 <?php
     session_start();
+    if (!(isset($_SESSION['UserID']) && isset($_SESSION['UserName']))) {
+        header('Location: LoginPage.php');
+        exit();
+    }
     $userName = $_SESSION['UserName'];
     $IsAdmin = $_SESSION['IsAdmin'];
 
@@ -316,7 +320,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h1 class="card-title text-center">Consultation Form</h1>
-                        <!-- action="#" method="post" -->
+                        <div id="divCFormAlerts"></div><!-- action="#" method="post" -->
                         <form >
                             <div class="mb-3">
                                 <label for="name" class="form-label">Name:</label>
@@ -324,7 +328,7 @@
                             </div>
                             <div class="row mb-3">
                                 <div class= "col-sm-4">
-                                    <label for="yearSelect" class="form-label">Year Level:</label>
+                                    <label for="yearSelect" class="form-label">Year Level: <span class="text-danger">*</span></label>
                                     <select class="form-select" aria-label="Default select example" id="yearSelect"name="yearSelect">
                                         <option selected="">Select year</option>
                                         <?php
@@ -353,9 +357,9 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-8">
-                                    <label for="name" class="form-label">Section:</label>
+                                    <label for="name" class="form-label">Section: <span class="text-danger">*</span></label>
                                     <select class="form-select" aria-label="Default select example" id="sectionCSelect" name="sectionCSelect">
-                                        <option selected="">Select section</option>
+                                        <option selected="" value="0">Select section</option>
                                     </select>
                                 </div>
                                 <script>
@@ -434,11 +438,11 @@
 
                             </div>
                             <div class="mb-3">
-                                <label for="purpose" class="form-label">Purpose of Consultation:</label>
+                                <label for="purpose" class="form-label">Purpose of Consultation: <span class="text-danger">*</span></label>
                                 <textarea class="form-control" id="purpose" name="purpose" rows="4"></textarea>
                             </div>
                             <div class="mb-3">
-                                <label for="purpose" class="form-label">Professors' Name</label>
+                                <label for="purpose" class="form-label">Professors' Name  <span class="text-danger">*</span></label>
                                 <?php
                                     try {
                                         $serverName = "DESKTOP-94I5S6B\\SQLEXPRESS"; //serverName\instanceName
@@ -485,12 +489,12 @@
                                 
                             </div>
                             <div class="mb-3">
-                                <label for="date" class="form-label">Requested Date:</label>
+                                <label for="date" class="form-label">Requested Date: <span class="text-danger">*</span></label>
                                 <input type="date" class="date form-control" id="consultationDate" name="date" data-date-format="yyyy-mm-dd">
                     
                             </div>
                             <div class="mb-3">
-                            <label for="inputTime" class="form-label">Requested Time</label>
+                            <label for="inputTime" class="form-label">Requested Time <span class="text-danger">*</span></label>
                             
                                 <input type="time" class="form-control" id="consultationTime">
                             
@@ -508,7 +512,15 @@
         </main>
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
-
+    <div style="display: none">
+        <div id="alertTemplate">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-octagon me-1"></i>
+                Alert_Message
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>        
+    </div>
     <!-- Vendor JS Files -->
     <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
     <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -540,31 +552,39 @@
             var purpose = $('#purpose').val()
             var requestedDate = $('#consultationDate').val()
             var requestedTime = $('#consultationTime').val()
-            
-            $.ajax({
-                url: 'CFormButton.php',
-                type: 'POST',
-                data: { 
-                    sectionSelect: sectionCSelect,
-                    professorId: professorId,
-                    purpose: purpose,
-                    RequestedDate: requestedDate,
-                    RequestedTime: requestedTime
-                },
-                dataType: 'json',
-                success: function(response) {
-                        console.log(response.message)
-                        if(response.submitted){
-                            window.location.href = 'CformReceipt.php?TransactionId=' + response.TransactionID;
-                        }
-                },
-                error: function(xhr, status, error) {
-                    // Error
-                    console.error(error.message);
-                    console.error(xhr.responseText);
-                    console.error('Failed to fetch DFormReceipt.php?');
-                }
-            });
+            if ((!sectionCSelect.trim())||(professorId == 0)||(!purpose.trim())||(!requestedDate)||(!requestedTime)){
+                var a = $('#alertTemplate').html()
+                a = a.replace('Alert_Message','Please fill in all required fields before submitting.')
+                $('#divCFormAlerts').append(a)
+                setTimeout(function(){
+                    $('#divCFormAlerts').empty()
+                },10000)
+            } else {
+                $.ajax({
+                    url: 'CFormButton.php',
+                    type: 'POST',
+                    data: { 
+                        sectionSelect: sectionCSelect,
+                        professorId: professorId,
+                        purpose: purpose,
+                        RequestedDate: requestedDate,
+                        RequestedTime: requestedTime
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                            console.log(response.message)
+                            if(response.submitted){
+                                window.location.href = 'CformReceipt.php?TransactionId=' + response.TransactionID;
+                            }
+                    },
+                    error: function(xhr, status, error) {
+                        // Error
+                        console.error(error.message);
+                        console.error(xhr.responseText);
+                        console.error('Failed to fetch DFormReceipt.php?');
+                    }
+                });
+            }
         }
 
     </script>

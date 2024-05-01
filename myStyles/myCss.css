@@ -65,3 +65,13 @@ td {
 th {
   vertical-align: middle !important; /* or top */
 }
+
+.tr-New {
+  --bs-table-bg: #e9c46a;
+}
+.tr-Approved {
+  --bs-table-bg: lightgreen;
+}
+.tr-Rejected {
+  --bs-table-bg: lightcoral;
+}
