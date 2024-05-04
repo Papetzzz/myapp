@@ -12,9 +12,11 @@ if(isset($_GET['TransactionId'])) {
 
     // Fetch transaction details from the database based on the provided TransactionId
     // Replace this code with your actual database query
-    $serverName = "DESKTOP-94I5S6B\SQLEXPRESS";
-    $connectionInfo = array("Database" => "CpE_Transactions");
-    $conn = sqlsrv_connect($serverName, $connectionInfo);
+    // $serverName = "DESKTOP-94I5S6B\SQLEXPRESS";
+    // $connectionInfo = array("Database" => "CpE_Transactions");
+    // $conn = sqlsrv_connect($serverName, $connectionInfo);
+
+    include('../config/db_connect.php');
 
     if ($conn === false) {
         // Handle connection failure

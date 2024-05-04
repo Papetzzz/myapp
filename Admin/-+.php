@@ -518,17 +518,18 @@ else {
                                             <label for="pro" class="form-label">Professor's Name:</label>
                                             <?php
                                                 try {
-                                                    $serverName = "DESKTOP-94I5S6B\\SQLEXPRESS"; //serverName\instanceName
-                                                    $connectionInfo = array("Database" => "CpE_Transactions");
-                                                    $conn = sqlsrv_connect($serverName, $connectionInfo);
-                                                    
+                                                    // $serverName = "DESKTOP-94I5S6B\\SQLEXPRESS"; //serverName\instanceName
+                                                    // $connectionInfo = array("Database" => "CpE_Transactions");
+                                                    // $conn = sqlsrv_connect($serverName, $connectionInfo);
+                                                    include('../config/db_connect.php');
+
                                                     if ($conn === false) {
                                                         // Handle connection failure
                                                         die(print_r(sqlsrv_errors(), true));
                                                     }
 
                                                     // Perform SQL query
-                                                    $search = "SELECT * FROM Users_table WHERE RegistrationTypeID = 2";
+                                                    $search = "SELECT * FROM Users_table WHERE RegistrationTypeID = 2 ORDER BY Name";
                                                     $result = sqlsrv_query($conn, $search);
 
                                                     if ($result === false) {

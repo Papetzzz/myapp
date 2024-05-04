@@ -496,7 +496,7 @@
                                         }
 
                                         // Perform SQL query
-                                        $search = "SELECT * FROM Users_table WHERE RegistrationTypeID = 2";
+                                        $search = "SELECT * FROM Users_table WHERE RegistrationTypeID = 2 ORDER BY Name";
                                         $result = sqlsrv_query($conn, $search);
 
                                         if ($result === false) {
@@ -530,6 +530,13 @@
                                             Please select Professor.
                                     </div>
                             </div>
+                            <div class="d-flex align-items-center visually-hidden" id="repoResponse">
+                                <div class="spinner-border text-secondary m-1" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <span class="text-secondary">Waiting for repository to respond</span>
+                            </div>
+                            <span class="text-danger fs-6"id="repoDisconnect" style="display:none;">Not connected with repository, please try again later.</span>
                             <button class="btn btn-primary w-100" id="dFormSubmitBtn">
                                 <!--  data-bs-toggle="modal" data-bs-target="#verticalycentered" -->
                                 Submit
@@ -568,13 +575,61 @@
                                     event.preventDefault()
                                     isFormValid = validateForm(); // Validate the form
                                     if (!isFormValid) {
-                                        
+                                        console.log('form invalid')
                                         return false; // Prevent the default behavior (opening the modal)
                                     } else {
-                                        $('#dFormSubmitModal').click()
+                                        $('#repoDisconnect').hide('fast');
+                                        $('#repoResponse').removeClass('visually-hidden');
+                                        //REPOSITORY TO OPEN HERE
+                                        // repoConnectPHP()
+                                        
+                                        // send HTTP GET request to the IP address with the parameter "pin" and value "p", then execute the function
+				                        // $.get("http://192.168.1.198:80/", {pin:11}); // execute get request
+                                        // $.get("http://localhost:8080/myapp/config/proxy.php", {pin: 11}, function(data) {
+                                        //     // Handle the response from the NodeMCU if needed
+                                        //     console.log(data);
+                                        //     if (data=='Pin toggled'){
+                                        //         $('#repoResponse').addClass('visually-hidden');
+                                        //         $('#dFormSubmitModal').click()
+                                        //     } else {
+                                        //         $('#repoResponse').addClass('visually-hidden');
+                                        //         $('#repoDisconnect').show('fast');
+                                        //     }
+                                        // });
+
+                                        setTimeout(function(){
+                                            $('#repoResponse').addClass('visually-hidden');
+                                            $('#dFormSubmitModal').click()
+                                        },2000)
                                     }
                                 });
-
+                                function repoConnectPHP(){
+                                    $.ajax({
+                                            url: 'config/repo_connect.php',
+                                            type: 'POST',
+                                            data: { ip: '192.168.249.92' },
+                                            dataType: 'json',
+                                            success: function(response) {
+                                                console.log(response)
+                                                if (response.success) {
+                                                    console.log('Host is reachable');
+                                                    // Open the modal or perform other actions if the host is reachable
+                                                    $('#repoResponse').addClass('visually-hidden');
+                                                    $('#dFormSubmitModal').click()
+                                                } else {
+                                                    console.log('Host is unreachable');
+                                                    $('#repoResponse').addClass('visually-hidden');
+                                                    $('#repoDisconnect').show('fast');
+                                                    // Handle the case where the host is unreachable
+                                                    // For example, display an error message to the user
+                                                }
+                                            },
+                                            error: function(xhr, status, error) {
+                                                console.error('Error:', error);
+                                                // Handle the AJAX error if necessary
+                                            }
+                                        });
+                                }
                                 // Function to validate the form
                                 function validateForm() {
                                     var isValid = true; // Initialize validation flag as true
@@ -721,9 +776,12 @@
                 },
                 dataType: 'json',
                 success: function(response) {
-                        console.log(response.message)
-                        if(response.submitted){
+                        // console.log(response.message)
+                        
+                        if(response.submitted == true){
+
                             window.location.href = 'DformReceipt.php?TransactionId=' + response.TransactionID;
+                            
                         }
                 },
                 error: function(xhr, status, error) {

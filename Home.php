@@ -7,12 +7,13 @@ if (!(isset($_SESSION['UserID']) && isset($_SESSION['UserName']))) {
 }
 $IsAdmin = $_SESSION['IsAdmin'];
 
-$serverName = "DESKTOP-94I5S6B\SQLEXPRESS"; //serverName\instanceName
+// $serverName = "DESKTOP-94I5S6B\SQLEXPRESS"; //serverName\instanceName
 
-// Since UID and PWD are not specified in the $connectionInfo array,
-// The connection will be attempted using Windows Authentication.
-$connectionInfo = array( "Database"=>"CpE_Transactions");
-$conn = sqlsrv_connect( $serverName, $connectionInfo);
+// // Since UID and PWD are not specified in the $connectionInfo array,
+// // The connection will be attempted using Windows Authentication.
+// $connectionInfo = array( "Database"=>"CpE_Transactions");
+// $conn = sqlsrv_connect( $serverName, $connectionInfo);
+include('config/db_connect.php');
 
 function countConsultation($conn) {
     $sql = "SELECT t.TransactionID FROM Transactions_table t
@@ -534,7 +535,7 @@ function countSubmission($conn) {
         
         // fetchRequests('S')
         function fetchRequests(Mode){
-            console.log('fetchRequests start: ',Mode)
+            // console.log('fetchRequests start: ',Mode)
             $('#documentRequests').empty()
             $('#consultationRequests').empty()
             $.ajax({
@@ -545,14 +546,14 @@ function countSubmission($conn) {
                 },
                 dataType: 'json',
                 success: function(response) {
-                    console.log('fetchRequests success: ',Mode)
+                    // console.log('fetchRequests success: ',Mode)
 
                     var countS = 0
                     var countC = 0
                     $(response).each(function(i,field){
-                        console.log('field.Code: ',field.Code)
+                        // console.log('field.Code: ',field.Code)
                         if (field.Code == 'S'){
-                            console.log('field: ',field)
+                            // console.log('field: ',field)
                             countS++
                             var s = $('#documentRequestsTemplate').html()
                             s = s.replace("Name_Professor",field.Name)
@@ -567,10 +568,10 @@ function countSubmission($conn) {
                             } 
                             
                             $('#documentRequests').append(s)
-                            console.log('added to documents')
+                            // console.log('added to documents')
                         }
                         else if (field.Code == 'C'){
-                            console.log('response: ',field)
+                            // console.log('response: ',field)
                             countC++;
                             var c = $('#consultationRequestsTemplate').html()
                             c = c.replace("Name_Professor",field.Name)
@@ -593,7 +594,7 @@ function countSubmission($conn) {
                             } 
 
                             $('#consultationRequests').append(c)
-                            console.log('added to consult')
+                            // console.log('added to consult')
 
                         }
                     })

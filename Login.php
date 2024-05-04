@@ -1,31 +1,25 @@
 <?php
-/*
-// $ip =   "192.168.1.9";
+
+// $ip =   "192.168.249.92";
 // exec("ping -n 3 $ip", $output, $status);
 // print_r($output);
 // Arduino's IP address
-$arduino_ip = '192.168.1.9'; // Change this to your Arduino's IP address
+// $arduino_ip = '192.168.1.9'; // Change this to your Arduino's IP address
 // Data to send
-$data = 123; // Change this to your desired data
+// $data = 123; // Change this to your desired data
 
 // Send HTTP request
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, "http://$arduino_ip/data?data=$data");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-$response = curl_exec($ch);
-curl_close($ch);
+// $ch = curl_init();
+// curl_setopt($ch, CURLOPT_URL, "http://$arduino_ip/data?data=$data");
+// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+// $response = curl_exec($ch);
+// curl_close($ch);
 
-echo "result </br>";
-echo $response; // Response from Arduino
-*/
+// echo "result </br>";
+// echo $response; // Response from Arduino
+
 /***********************************************/
-
-$serverName = "DESKTOP-94I5S6B\SQLEXPRESS"; //serverName\instanceName
-
-// Since UID and PWD are not specified in the $connectionInfo array,
-// The connection will be attempted using Windows Authentication.
-$connectionInfo = array( "Database"=>"CpE_Transactions");
-$conn = sqlsrv_connect( $serverName, $connectionInfo);
+include('config/db_connect.php');
 
 //$IDNumber='19-03022';
 //$Password='DELAROCA';
