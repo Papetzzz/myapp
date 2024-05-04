@@ -496,7 +496,7 @@
                                         }
 
                                         // Perform SQL query
-                                        $search = "SELECT * FROM Users_table WHERE RegistrationTypeID = 2 ORDER BY Name";
+                                        $search = "SELECT * FROM Users_table WHERE RegistrationTypeID = 2 ORDER BY UserID ASC";
                                         $result = sqlsrv_query($conn, $search);
 
                                         if ($result === false) {
@@ -506,11 +506,12 @@
 
                                         // Start select box
                                         echo '<select class="form-select mb-3" aria-label="Default select example" name="professorId" id="professorId" required>';
-                                        
+                                        $count =0;
                                         // Fetch and display results
                                         while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+                                            $count++;
                                             // Output option for each row
-                                            echo '<option value="' . $row['UserID'] . '">' . $row['Name'] . '</option>';
+                                            echo '<option value="' . $row['UserID'] . '" class="'.$count.'0">' . $row['Name'] . '</option>';
                                         }
                                         
                                         // Close select box
@@ -581,21 +582,30 @@
                                         $('#repoDisconnect').hide('fast');
                                         $('#repoResponse').removeClass('visually-hidden');
                                         //REPOSITORY TO OPEN HERE
-                                        // repoConnectPHP()
-                                        
-                                        // send HTTP GET request to the IP address with the parameter "pin" and value "p", then execute the function
-				                        // $.get("http://192.168.1.198:80/", {pin:11}); // execute get request
+                                        // // repoConnectPHP()
+                                        // var professorRepoVal= $('#professorId option:selected').attr('class');
+                                        // console.log('professorRepoVal ',professorRepoVal)
+                                        // var proxyData;
+                                        // // send HTTP GET request to the IP address with the parameter "pin" and value "p", then execute the function
+				                        // // $.get("http://192.168.1.198:80/", {pin:11}); // execute get request
                                         // $.get("http://localhost:8080/myapp/config/proxy.php", {pin: 11}, function(data) {
                                         //     // Handle the response from the NodeMCU if needed
-                                        //     console.log(data);
-                                        //     if (data=='Pin toggled'){
-                                        //         $('#repoResponse').addClass('visually-hidden');
-                                        //         $('#dFormSubmitModal').click()
-                                        //     } else {
-                                        //         $('#repoResponse').addClass('visually-hidden');
-                                        //         $('#repoDisconnect').show('fast');
-                                        //     }
+                                        //     console.log('A',data);
+                                        //     proxyData=data;
+
                                         // });
+                                        // $.get("http://localhost:8080/myapp/config/proxyB.php", {pinB: professorRepoVal}, function(dataB) {
+                                        //         // Handle the response from the NodeMCU if needed
+                                        //         console.log('B',dataB);
+                                        //         if (dataB=='Pin toggled'){
+                                        //             $('#repoResponse').addClass('visually-hidden');
+                                        //             $('#dFormSubmitModal').click()
+                                        //         } else {
+                                        //             $('#repoResponse').addClass('visually-hidden');
+                                        //             $('#repoDisconnect').show('fast');
+                                        //         }
+                                        // });
+                                        
 
                                         setTimeout(function(){
                                             $('#repoResponse').addClass('visually-hidden');
