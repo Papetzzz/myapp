@@ -583,34 +583,34 @@
                                         $('#repoResponse').removeClass('visually-hidden');
                                         //REPOSITORY TO OPEN HERE
                                         // // repoConnectPHP()
-                                        // var professorRepoVal= $('#professorId option:selected').attr('class');
-                                        // console.log('professorRepoVal ',professorRepoVal)
-                                        // var proxyData;
-                                        // // send HTTP GET request to the IP address with the parameter "pin" and value "p", then execute the function
-				                        // // $.get("http://192.168.1.198:80/", {pin:11}); // execute get request
-                                        // $.get("http://localhost:8080/myapp/config/proxy.php", {pin: 11}, function(data) {
-                                        //     // Handle the response from the NodeMCU if needed
-                                        //     console.log('A',data);
-                                        //     proxyData=data;
+                                        var professorRepoVal= $('#professorId option:selected').attr('class');
+                                        console.log('professorRepoVal ',professorRepoVal)
+                                        var proxyData;
+                                        // send HTTP GET request to the IP address with the parameter "pin" and value "p", then execute the function
+				                        // $.get("http://192.168.1.198:80/", {pin:11}); // execute get request
+                                        $.get("http://localhost:8080/myapp/config/proxy.php", {pin: 11}, function(data) {
+                                            // Handle the response from the NodeMCU if needed
+                                            console.log('A',data);
+                                            proxyData=data;
 
-                                        // });
-                                        // $.get("http://localhost:8080/myapp/config/proxyB.php", {pinB: professorRepoVal}, function(dataB) {
-                                        //         // Handle the response from the NodeMCU if needed
-                                        //         console.log('B',dataB);
-                                        //         if (dataB=='Pin toggled'){
-                                        //             $('#repoResponse').addClass('visually-hidden');
-                                        //             $('#dFormSubmitModal').click()
-                                        //         } else {
-                                        //             $('#repoResponse').addClass('visually-hidden');
-                                        //             $('#repoDisconnect').show('fast');
-                                        //         }
-                                        // });
+                                        });
+                                        $.get("http://localhost:8080/myapp/config/proxyB.php", {pinB: professorRepoVal}, function(dataB) {
+                                                // Handle the response from the NodeMCU if needed
+                                                console.log('B',dataB);
+                                                if (dataB=='Pin toggled'){
+                                                    $('#repoResponse').addClass('visually-hidden');
+                                                    $('#dFormSubmitModal').click()
+                                                } else {
+                                                    $('#repoResponse').addClass('visually-hidden');
+                                                    $('#repoDisconnect').show('fast');
+                                                }
+                                        });
                                         
 
-                                        setTimeout(function(){
-                                            $('#repoResponse').addClass('visually-hidden');
-                                            $('#dFormSubmitModal').click()
-                                        },2000)
+                                        // setTimeout(function(){
+                                        //     $('#repoResponse').addClass('visually-hidden');
+                                        //     $('#dFormSubmitModal').click()
+                                        // },2000)
                                     }
                                 });
                                 function repoConnectPHP(){
