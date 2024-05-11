@@ -560,9 +560,9 @@
                                             <div class="text-center fw-bold fs-2 card-title py-1" id="submissionCountDown">30 s</div>
                                         </div>
                                         <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnSubCancel">Cancel</button>
+                                        <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnSubCancel">Cancel</button> -->
                                         <button type="button" class="btn btn-primary" id="btnSubmitted">Submitted</button>
-                                        <button type="button" class="btn btn-warning"id="btnSubRetry" hidden>Retry</button>
+                                        <!-- <button type="button" class="btn btn-warning"id="btnSubRetry" hidden>Retry</button> -->
                                         </div>
                                     </div>
                                 </div>
@@ -588,13 +588,19 @@
                                         var proxyData;
                                         // send HTTP GET request to the IP address with the parameter "pin" and value "p", then execute the function
 				                        // $.get("http://192.168.1.198:80/", {pin:11}); // execute get request
-                                        $.get("http://localhost:8080/myapp/config/proxy.php", {pin: 11}, function(data) {
+                                        $.get("config/proxy.php", {pin: 11}, function(data) {
                                             // Handle the response from the NodeMCU if needed
                                             console.log('A',data);
                                             proxyData=data;
 
-                                        });
-                                        $.get("http://localhost:8080/myapp/config/proxyB.php", {pinB: professorRepoVal}, function(dataB) {
+                                        }); 
+                                        // $.get("http://localhost:8080/myapp/config/proxy.php", {pin: 11}, function(data) {
+                                        //     // Handle the response from the NodeMCU if needed
+                                        //     console.log('A',data);
+                                        //     proxyData=data;
+
+                                        // });
+                                        $.get("config/proxyB.php", {pinB: professorRepoVal}, function(dataB) {
                                                 // Handle the response from the NodeMCU if needed
                                                 console.log('B',dataB);
                                                 if (dataB=='Pin toggled'){

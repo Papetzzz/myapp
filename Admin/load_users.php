@@ -17,7 +17,7 @@ try {
     $search = "SELECT r.Code, u.* FROM Users_table u 
                JOIN RegistrationType_table r ON u.RegistrationTypeID = r.RegistrationTypeID
                WHERE Name like '%" . $query . "%' OR IDNumber like '%" . $query . "%'
-               ORDER BY IDNumber";
+                ORDER BY u.UserID ASC";
 
     // Execute the SQL query
     $result = sqlsrv_query($conn, $search);

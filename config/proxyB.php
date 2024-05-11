@@ -9,7 +9,7 @@
 
 // Forward the request to the NodeMCU
     $pinB_value = $_GET['pinB'];
-    $url = "http://192.168.1.8/?pinB=$pinB_value";
+    $url = "http://172.20.10.5/?pinB=$pinB_value";
     $nodeMCUB_response = @file_get_contents($url);
 
     if ($nodeMCUB_response === FALSE) {
