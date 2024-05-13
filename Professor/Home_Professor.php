@@ -430,14 +430,14 @@ $IsAdmin = $_SESSION['IsAdmin'];
                 </div>
                 <ul class="nav nav-pills d-flex" id="myTabjustified" role="tablist">
                     <li class="nav-item flex-fill" role="presentation">
-                        <button class="border nav-link w-100" id="document-tab" data-bs-toggle="tab" data-bs-target="#profile-justified" type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1"><u><b>Pending Documents</b></u></button>
+                        <button class="border nav-link w-100" id="document-tab" data-bs-toggle="tab" data-bs-target="#divSubmissionCards" type="button" role="tab" aria-controls="home" aria-selected="false" tabindex="-1"><u><b>Pending Documents</b></u></button>
                     </li>
                     <li class="nav-item flex-fill" role="presentation">
                         <button class="border nav-link w-100 active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#divConsultationCards" type="button" role="tab" aria-controls="profile" aria-selected="true"><u><b>Pending Consultation Requests</b></u></button>
                     </li>
                 </ul>
                 <div class="tab-content pt-2" id="myTabjustifiedContent">
-                    <div  class="tab-pane fade active show" role="tabpanel" aria-labelledby="profile-tab" id="divConsultationCards">
+                    <div  class="tab-pane fade active show" role="tabpanel" aria-labelledby="document-tab" id="divConsultationCards">
                         <div class="row consultCardToday" style="display: none">
                             <h5 class="card-title mx-3">Requested Today</h5>
                         </div>
@@ -450,7 +450,7 @@ $IsAdmin = $_SESSION['IsAdmin'];
                             <h5 class="card-title mx-3">Requested Others</h5>
                         </div>
                     </div>
-                    <div  class="tab-pane fade active show" role="tabpanel" aria-labelledby="profile-tab" id="divSubmissionCards">
+                    <div  class="tab-pane fade active" role="tabpanel" aria-labelledby="submit-card-tab" id="divSubmissionCards">
                         <div class="row submitCardToday" style="display: none">
                             <h5 class="card-title mx-3">Requested Today</h5>
                         </div>
@@ -642,7 +642,8 @@ $IsAdmin = $_SESSION['IsAdmin'];
                             $('#consultCard'+TransactionID+' .card-body').append(alert)
                             setTimeout(function() {
                                 $('#alert' + TransactionID).hide('slow');
-                            }, 10000);
+                                $('#consultCard' + TransactionID).hide('slow');
+                            }, 5000);
 
                         // });
                     // }
