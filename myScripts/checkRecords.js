@@ -9,6 +9,7 @@ function checkForNewRecords() {
                 if (window.location.pathname.includes('/Professor/Home_Professor')) {
                     // If the current page is Professor/Home_Professor
                     updateTable();
+                    updateTableSub();
                 }
                 
                 playSound(); //try 
@@ -147,7 +148,6 @@ function updateTable(e,dateRange) {
 
 // Function to update the table based on the selected ordering and direction
 function updateTableSub(e,dateRange) {
-    console.log('updateTableSub')
     count()
     // Get the selected ordering and direction
     var orderBy = $('#orderByCSelect').val();
@@ -209,6 +209,12 @@ function updateTableSub(e,dateRange) {
                     } else {
                         $('#divSubmissionCards .submitCardOthers').show('medium');
                         $('#divSubmissionCards .submitCardOthers').append(card);
+                    }
+                    // alert(field.DateAccepted)
+                    if (field.DateAccepted == null){
+                        $('#rowReceived'+field.TransactionID).hide(); 
+                    } else {  
+                        $('#rowAcceptDeclineSub'+field.TransactionID).hide();
                     }
                 })
             }

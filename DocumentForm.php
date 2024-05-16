@@ -581,6 +581,7 @@
                                     } else {
                                         $('#repoDisconnect').hide('fast');
                                         $('#repoResponse').removeClass('visually-hidden');
+                                        
                                         //REPOSITORY TO OPEN HERE
                                         // // repoConnectPHP()
                                         var professorRepoVal= $('#professorId option:selected').attr('class');

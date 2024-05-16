@@ -523,13 +523,38 @@ $IsAdmin = $_SESSION['IsAdmin'];
                                         <label for="inputReasonTransactNum" class="form-label">Remarks:</label>
                                         <textarea type="text" class="form-control" id="inputReasonTransactNum" placeholder="Please provide reason for declining"></textarea>
                                     </div>
-                                    <hr>
-                                    <div class="row" id="rowAcceptDeclineTransactNum">
+                                    <div class="row" id="rowAcceptDeclineSubTransactNum">
                                         <!-- <p class="card-text col-md-6 mb-1">Do you want to accept this consultation?</p> -->
-                                            <button class="btn btn-primary  col me-2" onclick="receivedDocument(TransactNum)">
-                                                <i class="bi bi-check-circle me-1"></i>Received
-                                            </button>
-                                        </p>
+                                            
+                                            <div class="col-12 text-start mb-3" id="divReasonTransactNum" style="display: none;">
+                                                <label for="inputReasonTransactNum" class="form-label">Remarks:</label>
+                                                <textarea type="text" class="form-control" id="inputReasonTransactNum" placeholder="Please provide reason for declining"></textarea>
+                                            </div>
+                                            <hr>
+                                            <div class="row" id="rowAcceptDeclineTransactNum">
+                                                <p class="card-text col-md-6 mb-1">Do you want to accept this consultation?</p>
+                                                <div class="card-text col me-2">
+                                                    <button class="btn btn-primary col-sm-5 me-1" onclick="acceptRequest(TransactNum)">
+                                                        <i class="bi bi-check-circle me-1"></i>Accept
+                                                    </button>
+                                                    <button class="btn btn-danger  col-sm-5" onclick="declineRequest(TransactNum)">
+                                                        <i class="bi bi-x-circle me-1"></i>Decline
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div id="submitButtonTransactNum" style="display: none;">
+                                                <button class="btn btn-primary col-sm-5 me-1" >
+                                                    <i class="bi bi-check-circle me-1"></i>Submit Response
+                                                </button>
+                                            </div>
+                                        <!-- </p> -->
+                                    </div>
+                                    
+                                    <div class="row" id="rowReceivedTransactNum">
+                                        <hr>
+                                        <button class="btn btn-primary  col me-2" onclick="receivedDocument(TransactNum)">
+                                            <i class="bi bi-check-circle me-1"></i>Received
+                                        </button>
                                     </div>
                                 </div>
                             </div>

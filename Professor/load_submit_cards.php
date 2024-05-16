@@ -40,7 +40,8 @@ try {
                 s.Description as Section,
                 a.Purpose as Purpose,
                 a.RequestedDate AS Date,
-                a.TransactionDate as DateSubmitted
+                a.TransactionDate as DateSubmitted,
+                a.DateAccepted
                 FROM Transactions_table a
                 join Users_table u on a.UserID = u.UserID
                 join Section_table s on a.SectionID = s.SectionID
