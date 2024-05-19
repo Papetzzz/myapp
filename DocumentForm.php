@@ -378,7 +378,7 @@
                                                 if (xhr.status === 200) {
                                                     // Success
                                                     var sections = JSON.parse(xhr.responseText);
-                                                    console.log(sections)
+                                                    // console.log(sections)
                                                     populateSections(sections);
                                                 } else {
                                                     // Error
@@ -511,7 +511,8 @@
                                         while ($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
                                             $count++;
                                             // Output option for each row
-                                            echo '<option value="' . $row['UserID'] . '" class="'.$count.'0">' . $row['Name'] . '</option>';
+                                            // echo '<option value="' . $row['UserID'] . '" class="'.$count.'0">' . $row['Name'] . '</option>';
+                                            echo '<option value="' . $row['UserID'] . '" class="'.$row['RepoLockerNo'].'">' . $row['Name'] . '</option>';
                                         }
                                         
                                         // Close select box
@@ -535,9 +536,9 @@
                                 <div class="spinner-border text-secondary m-1" role="status">
                                     <span class="visually-hidden">Loading...</span>
                                 </div>
-                                <span class="text-secondary">Waiting for repository to respond</span>
+                                <span class="text-secondary message"></span>
                             </div>
-                            <span class="text-danger fs-6"id="repoDisconnect" style="display:none;">Not connected with repository, please try again later.</span>
+                            <span class="text-danger fs-6" id="repoDisconnect" style="display:none;">Not connected with repository, please try again later.</span>
                             <button class="btn btn-primary w-100" id="dFormSubmitBtn">
                                 <!--  data-bs-toggle="modal" data-bs-target="#verticalycentered" -->
                                 Submit
@@ -561,7 +562,7 @@
                                         </div>
                                         <div class="modal-footer">
                                         <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btnSubCancel">Cancel</button> -->
-                                        <button type="button" class="btn btn-primary" id="btnSubmitted">Submitted</button>
+                                        <button type="button" class="btn btn-primary" id="btnSubmitted" hidden>Submitted</button>
                                         <!-- <button type="button" class="btn btn-warning"id="btnSubRetry" hidden>Retry</button> -->
                                         </div>
                                     </div>
@@ -570,7 +571,13 @@
                         <script>
                             $(document).ready(function() {
                                 var isFormValid = false; // Flag to track form validation status
-
+                                var countdown = 30;
+                                // Call the updateCountdown function every second (1000 milliseconds)
+                                var timerInterval;
+                                $('#btnSubmitted').click(function(e) {
+                                        e.preventDefault(); // Prevent default form submission
+                                        updateDocument()
+                                    })  
                                 // Check form validation before opening the modal
                                 $('#dFormSubmitBtn').click(function() {
                                     event.preventDefault()
@@ -581,38 +588,14 @@
                                     } else {
                                         $('#repoDisconnect').hide('fast');
                                         $('#repoResponse').removeClass('visually-hidden');
+                                        submitDocument();
                                         
                                         //REPOSITORY TO OPEN HERE
                                         // // repoConnectPHP()
-                                        var professorRepoVal= $('#professorId option:selected').attr('class');
-                                        console.log('professorRepoVal ',professorRepoVal)
-                                        var proxyData;
-                                        // send HTTP GET request to the IP address with the parameter "pin" and value "p", then execute the function
-				                        // $.get("http://192.168.1.198:80/", {pin:11}); // execute get request
-                                        $.get("config/proxy.php", {pin: 11}, function(data) {
-                                            // Handle the response from the NodeMCU if needed
-                                            console.log('A',data);
-                                            proxyData=data;
-
-                                        }); 
-                                        // $.get("http://localhost:8080/myapp/config/proxy.php", {pin: 11}, function(data) {
-                                        //     // Handle the response from the NodeMCU if needed
-                                        //     console.log('A',data);
-                                        //     proxyData=data;
-
-                                        // });
-                                        $.get("config/proxyB.php", {pinB: professorRepoVal}, function(dataB) {
-                                                // Handle the response from the NodeMCU if needed
-                                                console.log('B',dataB);
-                                                if (dataB=='Pin toggled'){
-                                                    $('#repoResponse').addClass('visually-hidden');
-                                                    $('#dFormSubmitModal').click()
-                                                } else {
-                                                    $('#repoResponse').addClass('visually-hidden');
-                                                    $('#repoDisconnect').show('fast');
-                                                }
-                                        });
+                                        // var professorRepoVal= $('#professorId option:selected').attr('class');
+                                        // console.log('professorRepoVal ',professorRepoVal)
                                         
+                                        // openRepository(professorRepoVal);
 
                                         // setTimeout(function(){
                                         //     $('#repoResponse').addClass('visually-hidden');
@@ -620,33 +603,9 @@
                                         // },2000)
                                     }
                                 });
-                                function repoConnectPHP(){
-                                    $.ajax({
-                                            url: 'config/repo_connect.php',
-                                            type: 'POST',
-                                            data: { ip: '192.168.249.92' },
-                                            dataType: 'json',
-                                            success: function(response) {
-                                                console.log(response)
-                                                if (response.success) {
-                                                    console.log('Host is reachable');
-                                                    // Open the modal or perform other actions if the host is reachable
-                                                    $('#repoResponse').addClass('visually-hidden');
-                                                    $('#dFormSubmitModal').click()
-                                                } else {
-                                                    console.log('Host is unreachable');
-                                                    $('#repoResponse').addClass('visually-hidden');
-                                                    $('#repoDisconnect').show('fast');
-                                                    // Handle the case where the host is unreachable
-                                                    // For example, display an error message to the user
-                                                }
-                                            },
-                                            error: function(xhr, status, error) {
-                                                console.error('Error:', error);
-                                                // Handle the AJAX error if necessary
-                                            }
-                                        });
-                                }
+
+                                
+
                                 // Function to validate the form
                                 function validateForm() {
                                     var isValid = true; // Initialize validation flag as true
@@ -716,15 +675,31 @@
     </script> -->
     <script>
     // Set the initial countdown value
-    var countdown = 30;
-    // Call the updateCountdown function every second (1000 milliseconds)
-    var timerInterval;
-    $('#dFormSubmitBtn').click(function(e) {
-        e.preventDefault(); // Prevent default form submission
-        // submitDocument();
-        startCountdown()
+    function openRepository(pinNumber){
+        var proxyData;
+        // send HTTP GET request to the IP address with the parameter "pin" and value "p", then execute the function
+        $.get("config/proxy.php", {pin: 11}, function(data) {
+            // Handle the response from the NodeMCU if needed
+            console.log('A',data);
+            proxyData=data;
+
+        }); 
+
+        $.get("config/proxyB.php", {pinB: pinNumber}, function(dataB) {
+                // Handle the response from the NodeMCU if needed
+                console.log('B',dataB);
+                if (dataB=='Pin toggled'){
+                    startCountdown();
+                    $('#repoResponse').addClass('visually-hidden');
+                    $('#dFormSubmitModal').click()
+                } else {
+                    $('#repoResponse').addClass('visually-hidden');
+                    $('#repoDisconnect').text('Not connected with repository, please try again later.');
+                    $('#repoDisconnect').show('fast');
+                }
+        });
         
-    })
+    }
 
     $('#btnSubRetry').click(function(e) {
         e.preventDefault(); // Prevent default form submission
@@ -734,11 +709,7 @@
         startCountdown()
     })
 
-    $('#btnSubmitted').click(function(e) {
-        e.preventDefault(); // Prevent default form submission
-        submitDocument();
-        // startCountdown()
-    })
+    
 
     $('#btnSubCancel').click(function(e) {
         e.preventDefault(); // Prevent default form submission
@@ -776,39 +747,166 @@
         // Call updateCountdown once immediately to start the countdown
         updateCountdown();
     }
+    var currentTransactionId;
+    var timerWaitingProf;
+    var intervalWaitingProf;
     function submitDocument(){
-            var sectionSelect = $('#sectionSelect').val()
-            var professorId = $('#professorId').val()
-            var purpose = $('#purpose').val()
-            var documentTypeId = $('#documentType').val()
-            
-            $.ajax({
-                url: 'DFormButton.php',
-                type: 'POST',
-                data: { 
-                    sectionSelect: sectionSelect,
-                    professorId: professorId,
-                    purpose: purpose,
-                    documentType: documentTypeId
-                },
-                dataType: 'json',
-                success: function(response) {
-                        // console.log(response.message)
-                        
-                        if(response.submitted == true){
+        var sectionSelect = $('#sectionSelect').val()
+        var professorId = $('#professorId').val()
+        var purpose = $('#purpose').val()
+        var documentTypeId = $('#documentType').val()
+        
+        $.ajax({
+            url: 'DFormButton.php',
+            type: 'POST',
+            data: { 
+                sectionSelect: sectionSelect,
+                professorId: professorId,
+                purpose: purpose,
+                documentType: documentTypeId
+            },
+            dataType: 'json',
+            success: function(response) {
+                    
+                    if(response.submitted == true){
+                        // alert('response.TransactionID'+response.TransactionID)
+                        currentTransactionId = response.TransactionID;
 
-                            window.location.href = 'DformReceipt.php?TransactionId=' + response.TransactionID;
+                        $('#repoResponse .message').text(`Waiting for ${$('#professorId option:selected').text()} to respond`);
+                        $('#repoResponse').show();
+                        // alert('submitDocument currentTransactionId: ',currentTransactionId);
+                            // checkChangesDocument(response.TransactionID);
+                        
+                            var countinterval = 0;
+                        intervalWaitingProf = setInterval(function() {
+                            countinterval++
+                            // Call checkChangesDocument with the transactionId argument
+                            checkChangesDocument(response.TransactionID);
+                            // console.log('countinterval: ',countinterval)
+                        }, 1000);
+
+                        timerWaitingProf = setTimeout(function() {
+                            clearInterval(intervalWaitingProf);
+                            $('#repoResponse').addClass('visually-hidden');
+                            declineSubRequest(response.TransactionID)
+                            $('#repoDisconnect').text(`${$('#professorId option:selected').text()} did not respond. Please try again later`);
+                            $('#repoDisconnect').show();
+                            //update is denied
+                        }, 60000);
+                    }
+                    
+                    // // console.log(response.message)
+                    
+                    // if(response.submitted == true){
+
+                    //     window.location.href = 'DformReceipt.php?TransactionId=' + response.TransactionID;
+                        
+                    // }
+            },
+            error: function(xhr, status, error) {
+                // Error
+                console.error(error.message);
+                console.error(xhr.responseText);
+                console.error('Failed to fetch DFormReceipt.php?');
+            }
+        });
+    }
+    function declineSubRequest(TransactionID) {
+        isAccepted = 0;
+        IsApprove = 0;
+        IsDocument = false;
+        updateStatus(TransactionID, IsApprove, IsDocument) 
+            
+    }
+    function updateStatus(TransactionID, IsApprove, IsDocument) {
+        // Alert is useful for debugging, but remove it in the final version
+        var remarks = "1 minute finished"
+        
+        $.ajax({
+            url: 'Professor/update_approveconsult.php',
+            type: 'POST',
+            data: {
+                TransactionID: TransactionID,
+                IsApprove: IsApprove,
+                IsDocument: IsDocument,
+                Remarks: remarks
+            },
+            dataType: 'json',
+            success: function(response) {
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                console.error(status);
+                console.error(error);
+                console.error('Failed to update status');
+            }
+        });
+    }
+    function checkChangesDocument(transactionId){
+        // alert("checkChangesDocument(transactionId): "+transactionId)
+        // alert('checkChangesDocument currentTransactionId: '+ transactionId);
+        currentTransactionId = transactionId;
+        $.ajax({
+            url: 'checkChangesDocument.php',
+            type: 'POST',
+            data: { 
+                TransactionId: transactionId
+            },
+            dataType: 'json',
+            success: function(response) {
+                    // console.log("checkChangesDocument: ",response)
+                    if(response.submitted == true ){
+                        clearTimeout(timerWaitingProf);
+                        clearInterval(intervalWaitingProf);
+                        var professorRepoVal= $('#professorId option:selected').attr('class');
+                        // console.log('professorRepoVal ',professorRepoVal)
+                        
+                        $('#repoResponse .message').text('Waiting for respository to respond');
+                        $('#repoResponse').removeClass('visually-hidden');
+                        if(response.Code == 'A'){
+                            openRepository(professorRepoVal);
+                        } else if(response.Code == 'X'){
+                            $('#repoDisconnect').text('Submission declined by '+ $('#professorId option:selected').text())
+                            $('#repoDisconnect').show()
                             
+                            $('#repoResponse').addClass('visually-hidden');
                         }
-                },
-                error: function(xhr, status, error) {
-                    // Error
-                    console.error(error.message);
-                    console.error(xhr.responseText);
-                    console.error('Failed to fetch DFormReceipt.php?');
-                }
-            });
-        }
+                    }
+            },
+            error: function(xhr, status, error) {
+                // Error
+                console.error(error.message);
+                console.error(xhr.responseText);
+                console.error('Failed to fetch checkChangesDocument.php?');
+            }
+        });
+    }
+
+    function updateDocument(){        
+        $.ajax({
+            url: 'UpdateDocument.php',
+            type: 'POST',
+            data: { 
+                TransactionId: currentTransactionId
+            },
+            dataType: 'json',
+            success: function(response) {
+                    
+                    if(response.submitted == true){
+
+                        window.location.href = 'DformReceipt.php?TransactionId=' + response.TransactionID;
+                        
+                    }
+            },
+            error: function(xhr, status, error) {
+                // Error
+                console.error(error.message);
+                console.error(xhr.responseText);
+                console.error('Failed to fetch DFormReceipt.php?');
+            }
+        });
+    }
+
     </script>
     <script>
         $(function() {

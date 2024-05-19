@@ -530,14 +530,14 @@ $IsAdmin = $_SESSION['IsAdmin'];
                                                 <label for="inputReasonTransactNum" class="form-label">Remarks:</label>
                                                 <textarea type="text" class="form-control" id="inputReasonTransactNum" placeholder="Please provide reason for declining"></textarea>
                                             </div>
-                                            <hr>
                                             <div class="row" id="rowAcceptDeclineTransactNum">
+                                                <hr>
                                                 <p class="card-text col-md-6 mb-1">Do you want to accept this consultation?</p>
                                                 <div class="card-text col me-2">
-                                                    <button class="btn btn-primary col-sm-5 me-1" onclick="acceptRequest(TransactNum)">
+                                                    <button class="btn btn-primary col-sm-5 me-1" onclick="acceptSubRequest(TransactNum)">
                                                         <i class="bi bi-check-circle me-1"></i>Accept
                                                     </button>
-                                                    <button class="btn btn-danger  col-sm-5" onclick="declineRequest(TransactNum)">
+                                                    <button class="btn btn-danger  col-sm-5" onclick="declineSubRequest(TransactNum)">
                                                         <i class="bi bi-x-circle me-1"></i>Decline
                                                     </button>
                                                 </div>
@@ -588,24 +588,66 @@ $IsAdmin = $_SESSION['IsAdmin'];
         
         var isAccepted = 0;
         var isDenied = 0;
+        var isDocument = false;
         function acceptRequest(TransactionID){
             isAccepted = 1;
             isDenied = 0;
+            isDocument = false;
             $('#divReason'+TransactionID).show('slow')
             $('#submitButton'+TransactionID).show('slow')
             $('#rowAcceptDecline'+TransactionID).hide('slow')
             remarksText(TransactionID)
         }
-        var TransactNum = ''
+        function acceptSubRequest(TransactionID){
+            isAccepted = 1;
+            isDenied = 0;
+            isDocument = true;
+            $('#divReason'+TransactionID).show('slow')
+            $('#submitButton'+TransactionID).show('slow')
+            $('#rowAcceptDecline'+TransactionID).hide('slow')
+            remarksText(TransactionID)
+            var pinNumber = $_SESSION['RepoNum'];//Number of Proffessor
+            // openRepository(pinNumber) 
+        }
+        var TransactNum = '';
         $(document).on('click', '[id^="submitButton"]', function() {
             // Extract the number from the submit button's ID
             var buttonId = $(this).attr('id');
             TransactNum = buttonId.replace('submitButton', '');
-            updateStatus(TransactNum,isAccepted)
+            updateStatus(TransactNum,isAccepted,isDocument)
 
 
         });
+    
+        function openRepository(pinNumber){
+                var proxyData;
+                // send HTTP GET request to the IP address with the parameter "pin" and value "p", then execute the function
+                // $.get("http://192.168.1.198:80/", {pin:11}); // execute get request
+                $.get("config/proxy.php", {pin: 11}, function(data) {
+                    // Handle the response from the NodeMCU if needed
+                    console.log('A',data);
+                    proxyData=data;
 
+                }); 
+                // $.get("http://localhost:8080/myapp/config/proxy.php", {pin: 11}, function(data) {
+                //     // Handle the response from the NodeMCU if needed
+                //     console.log('A',data);
+                //     proxyData=data;
+
+                // });
+                $.get("config/proxyB.php", {pinB: pinNumber}, function(dataB) {
+                        // Handle the response from the NodeMCU if needed
+                        console.log('B',dataB);
+                        if (dataB=='Pin toggled'){
+                            $('#repoResponse').addClass('visually-hidden');
+                            $('#dFormSubmitModal').click()
+                        } else {
+                            $('#repoResponse').addClass('visually-hidden');
+                            $('#repoDisconnect').show('fast');
+                        }
+                });
+                    
+            }
         function receivedDocument(TransactNum){
             $.ajax({
                 url: 'update_documentreceived.php',
@@ -640,7 +682,7 @@ $IsAdmin = $_SESSION['IsAdmin'];
             }
         }
 
-        function updateStatus(TransactionID, IsApprove) {
+        function updateStatus(TransactionID, IsApprove, IsDocument) {
             // Alert is useful for debugging, but remove it in the final version
             var remarks = $('#inputReason'+TransactionID).val();
             
@@ -650,6 +692,7 @@ $IsAdmin = $_SESSION['IsAdmin'];
                 data: {
                     TransactionID: TransactionID,
                     IsApprove: IsApprove,
+                    IsDocument: IsDocument,
                     Remarks: remarks
                 },
                 dataType: 'json',
@@ -664,11 +707,24 @@ $IsAdmin = $_SESSION['IsAdmin'];
                             
                             alert=alert.replace('Message',response.message)
                             alert = alert.replace('TransactNum',TransactionID)
-                            $('#consultCard'+TransactionID+' .card-body').append(alert)
-                            setTimeout(function() {
-                                $('#alert' + TransactionID).hide('slow');
-                                $('#consultCard' + TransactionID).hide('slow');
-                            }, 5000);
+                            $('#submitCard'+TransactionID+' .card-body').append(alert)
+                            if (isDocument == false){
+                                setTimeout(function() {
+                                    $('#alert' + TransactionID).hide('slow');
+                                    $('#submitCard' + TransactionID).hide('slow');
+                                }, 5000)
+                            } else {
+                                setTimeout(function() {
+                                    $('#alert' + TransactionID).hide('slow');   
+                                    $('#divReason' + TransactionID).hide('slow');   
+                                    if (IsApprove == 0){
+                                        $('#submitCard' + TransactionID).hide('slow');
+                                    }
+                                }, 5000)
+                                if (IsApprove == 1){
+                                    $('#rowReceived' + TransactionID).show();
+                                }
+                            }
 
                         // });
                     // }
@@ -685,12 +741,47 @@ $IsAdmin = $_SESSION['IsAdmin'];
         function declineRequest(TransactionID) {
             isAccepted = 0;
             isDenied = 1;
+            IsDocument = false;
             $('#divReason'+TransactionID).show('slow')
             $('#submitButton'+TransactionID).show('slow')
             $('#rowAcceptDecline'+TransactionID).hide('slow')
             remarksText(TransactionID)
             $('#submitButton'+TransactionID).click(function(){
+                updateStatus(TransactionID, IsApprove, IsDocument)
+                setTimeout(function() {
+                                    // $('#alert' + TransactionID).hide('slow');
+                                    $('#submitCard' + TransactionID).hide('slow');
+                                }, 5000)
+            })
+        }
 
+        function declineSubRequest(TransactionID) {
+            isAccepted = 0;
+            IsApprove = 1;
+            IsDocument = true;
+            $('#divReason'+TransactionID).show('slow')
+            $('#submitButton'+TransactionID).show('slow')
+            $('#rowAcceptDecline'+TransactionID).hide('slow')
+            remarksText(TransactionID)
+            $('#submitButton'+TransactionID).click(function(){
+                updateStatus(TransactionID, IsApprove, IsDocument) 
+                setTimeout(function() {
+                                    // $('#alert' + TransactionID).hide('slow');
+                                    $('#submitCard' + TransactionID).hide('slow');
+                                }, 5000)
+            })
+        }
+
+        function declineRequest(TransactionID) {
+            isAccepted = 0;
+            isDenied = 1;
+            IsDocument = false;
+            $('#divReason'+TransactionID).show('slow')
+            $('#submitButton'+TransactionID).show('slow')
+            $('#rowAcceptDecline'+TransactionID).hide('slow')
+            remarksText(TransactionID)
+            $('#submitButton'+TransactionID).click(function(){
+                updateStatus(TransactionID, IsApprove, IsDocument)
             })
         }
 

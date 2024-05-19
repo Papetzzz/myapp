@@ -48,7 +48,7 @@ try {
                 join Status_Table st on a.StatusID = st.StatusID
                 where TransactionModeID = 2
                     AND a.ProfessorID = ".$_SESSION['UserID'].
-                    "AND st.Code = 'N'  AND
+                    "AND (st.Code = 'N' OR st.Code = 'A') AND
                     a.TransactionDate BETWEEN '".$startDate."' AND getdate()
                     ORDER BY ".$orderBy." ".$direction; // Dynamically order the results based on $orderBy and $direction
 

@@ -76,7 +76,7 @@ function updateTable(e,dateRange) {
     var direction = $('#orderCSelect').val();
     dateRange = dateRange ?? null;
     
-    console.log('updating table')
+    console.log('updating table FOR CONSULT')
     // Perform an AJAX request to fetch the updated data from the server
     // Send the selected ordering and direction to the server
     $.ajax({
@@ -166,8 +166,10 @@ function updateTableSub(e,dateRange) {
          },
         dataType: 'json',
         success: function(response) {
-
-            console.log(response)
+            console.log('updateTableSub UPDATES!!')                    
+            $('#divSubmissionCards .submitCardToday').empty()
+            $('#divSubmissionCards .submitCardThisWeek').empty()
+            $('#divSubmissionCards .submitCardOthers').empty()
             if (response.length > 0){
                 $.each(response, function(i, field){
 
@@ -194,11 +196,12 @@ function updateTableSub(e,dateRange) {
                     let yearAgo = new Date(today);
                     yearAgo.setDate(today.getDate() - 365);
 
-                    console.log(`field.DateSubmitted: ${field.DateSubmitted}
-                    submittedDate: ${submittedDate}
-                    ${submittedDate.toDateString()} === ${today.toDateString()}
-                    sevenDaysAgo: ${sevenDaysAgo}
-                    ${submittedDate.toDateString() === today.toDateString()}`)
+                    // console.log(`field.DateSubmitted: ${field.DateSubmitted}
+                    // submittedDate: ${submittedDate}
+                    // ${submittedDate.toDateString()} === ${today.toDateString()}
+                    // sevenDaysAgo: ${sevenDaysAgo}
+                    // ${submittedDate.toDateString() === today.toDateString()}`)
+
                     if (submittedDate.toDateString() === today.toDateString()){
                         $('#divSubmissionCards .submitCardToday').show('medium')
                         $('#divSubmissionCards .submitCardToday').append(card)

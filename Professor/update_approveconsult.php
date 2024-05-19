@@ -13,6 +13,7 @@ include('../config/db_connect.php');
 
 $TransactionID = $_POST['TransactionID'];
 $IsApprove = $_POST['IsApprove'];
+$IsDocument = $_POST['IsDocument'];
 $Remarks = $_POST['Remarks'];
 
 // Use ternary operator to set the StatusID based on the value of $IsApprove
@@ -20,9 +21,12 @@ $statusID = $IsApprove == 1 ? "(SELECT StatusID FROM Status_Table WHERE Code = '
 
 // Prepare the SQL query with parameters
 $insert = "UPDATE Transactions_table
-           SET StatusID = ".$statusID." , Remarks = '".$Remarks."'
-           ,DateAccepted = Getdate()
-           WHERE TransactionID = ?";
+           SET StatusID = ".$statusID." , Remarks = '".$Remarks."'";
+if ($IsDocument == false){
+     $insert .=",DateAccepted = Getdate()";
+
+}
+     $insert .="WHERE TransactionID = ?";
 
 // Prepare the SQL statement
 $result = sqlsrv_prepare($conn, $insert, array($TransactionID));

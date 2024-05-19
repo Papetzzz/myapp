@@ -376,7 +376,7 @@
                                                 if (xhr.status === 200) {
                                                     // Success
                                                     var sections = JSON.parse(xhr.responseText);
-                                                    console.log(sections)
+                                                    // console.log(sections)
                                                     populateSections(sections);
                                                 } else {
                                                     // Error
@@ -572,7 +572,7 @@
                     },
                     dataType: 'json',
                     success: function(response) {
-                            console.log(response.message)
+                            // console.log(response.message)
                             if(response.submitted){
                                 window.location.href = 'CformReceipt.php?TransactionId=' + response.TransactionID;
                             }

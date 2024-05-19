@@ -67,7 +67,7 @@ th {
 }
 
 .tr-New {
-  --bs-table-bg: #e9c46a;
+  --bs-table-bg: white;
 }
 .tr-Approved {
   --bs-table-bg: lightgreen;

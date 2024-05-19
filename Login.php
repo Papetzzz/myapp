@@ -59,6 +59,7 @@ if (!$conn) {
                     $_SESSION['UserName']=$row['Name'];
                     $_SESSION['IsAdmin']=$row['IsAdmin'];
                     $_SESSION['RegType']=$row['Code'];
+                    $_SESSION['RepoNum']=$row['RepoLockerNo'];
                     
                 if ($row['RegistrationTypeID'] == 2){
                     header('Location: Professor/Home_Professor.php');
